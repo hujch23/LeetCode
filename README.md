@@ -173,8 +173,38 @@ class Solution:
                     right -= 1
         
         return result
-```         
+```
       
+### 42. 接雨水
+
+接个锤子雨水啊，只记得用双指针。核心思路就是理解每个遍历位置的存水量=往左右看的最大值中的最小值减去当前位置的高度，只需要遍历一次，时间复杂度为O(n)，空间复杂度为O(1)
+
+```python
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        if not height:
+            return 0
+
+        left = 0
+        right = len(height) - 1
+        left_max = 0
+        right_max = 0
+        res = 0
+
+        while left < right:
+            
+            left_max = max(left_max, height[left])
+            right_max = max(right_max, height[right])
+
+            if left_max < right_max:
+                res += left_max - height[left]
+                left +=1
+            else:
+                res += right_max - height[right]
+                right -=1
+        return res
+```
+
 
                     
 
