@@ -38,6 +38,37 @@ class Solution:
         return list(hash.values())
 ```
 
+### 128. 最长连续序列
+自己写的，总体时间复杂度：O(n²)，使用列表（hash = []）作为查找结构，列表的查找操作是 O(n)，应该使用集合（set），查找操作为 O(1)
+```python 
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        max_count = 0
+        if not nums:
+            return 0
+
+        hash = []
+        for i in range(len(nums)):
+            hash.append(nums[i])
+            cur = nums[i]
+            cur_count = 1
+            while cur + 1 in hash:
+                cur_count +=1
+                cur = cur + 1
+            cur = nums[i]
+            while cur - 1 in hash:
+                cur_count +=1
+                cur = cur - 1
+            max_count = max(max_count, cur_count)
+
+        return max_count
+```
+
+```python 
+
+```
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
