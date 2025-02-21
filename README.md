@@ -228,6 +228,7 @@ class Solution:
 ### 438. 找到字符串中所有字母的异位词
 
 哈希表计数+滑动窗口的方法脑子跟上了手没跟上，还得练啊！主循环：O(n)，n 是字符串 s 的长度，每次循环中的字典比较：O(k)，k 是字符集大小，总时间复杂度：O(n * k)，空间复杂度：O(Σ)，用于存储字符串p和滑动窗口中每种字母的数量。
+因为题目给出字母都是小写的，因此可以直接用数组代替哈希表进行优化
  ```python           
   class Solution:
     def findAnagrams(self, s: str, p: str) -> List[int]:
@@ -251,9 +252,42 @@ class Solution:
             if cur_hash == hash:
                 result.append(left)
         return result
-      ```                    
-
-
+ ```
+ ```python               
+class Solution:  
+    def findAnagrams(self, s: str, p: str) -> List[int]:  
+        if len(s) < len(p):  
+            return []  
+            
+        # O(1) 空间，因为是固定大小26  
+        need = [0] * 26  
+        window = [0] * 26  
+        
+        # O(m) 时间  
+        for c in p:  
+            need[ord(c) - ord('a')] += 1  
+            
+        res = []  
+        
+        # O(m) 时间  
+        for i in range(len(p)):  
+            window[ord(s[i]) - ord('a')] += 1  
+            
+        # O(1) 时间的数组比较  
+        if window == need:  
+            res.append(0)  
+            
+        # O(n-m) 时间  
+        for i in range(len(p), len(s)):  
+            window[ord(s[i - len(p)]) - ord('a')] -= 1  
+            window[ord(s[i]) - ord('a')] += 1  
+            
+            # O(1) 时间的数组比较  
+            if window == need:  
+                res.append(i - len(p) + 1)  
+                
+        return res
+ ```  
 
 
 ## 图论
