@@ -289,6 +289,28 @@ class Solution:
         return res
  ```
 
+
+## 字串
+
+### 560. 和为K的子数组
+前缀和的思路，但是写的时候非常傻逼没用哈希表记录前缀和，导致复杂度不行，时间复杂度：O(n)，空间复杂度：O(n)，记住！记住！记住！哈希表查找当前的sum减去目标值就行
+ ```python  
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        
+        hash = {}
+        hash[0] = 1
+        curr_sum = count = 0
+
+        for num in nums:
+            curr_sum += num
+            count += hash.get(curr_sum - k, 0)
+            hash[curr_sum] = hash.get(curr_sum, 0) + 1
+
+
+        return count
+ ```  
+
 ### 239. 滑动窗口最大值
 哎，记起来了思路，使用双端单调队列，保持队列头是最大值，但是代码处理起来还是一堆问题，还是多练！记住：队列保存的是索引、先处理前k个即第一个窗口、先处理窗口边界（popleft）再考虑其它（pop）
  ```python  
@@ -318,26 +340,42 @@ class Solution:
         return result
  ```
 
-## 字串
+### 76. 最小覆盖字串
 
-### 560. 和为K的子数组
-前缀和的思路，但是写的时候非常傻逼没用哈希表记录前缀和，导致复杂度不行，时间复杂度：O(n)，空间复杂度：O(n)，记住！记住！记住！哈希表查找当前的sum减去目标值就行
+垃圾题目，完全写不出来啊！！！！
  ```python  
 class Solution:
-    def subarraySum(self, nums: List[int], k: int) -> int:
+    def minWindow(self, s: str, t: str) -> str:
         
         hash = {}
-        hash[0] = 1
-        curr_sum = count = 0
+        for char in t:
+            hash[char] = hash.get(char, 0) + 1
 
-        for num in nums:
-            curr_sum += num
-            count += hash.get(curr_sum - k, 0)
-            hash[curr_sum] = hash.get(curr_sum, 0) + 1
+        min_length = float('inf')
+        start = 0
+        valid = 0
+        left = 0
+        cur_hash = {}
 
+        for right in range(len(s)):
+            if s[right] in hash:
+                cur_hash[s[right]] = cur_hash.get(s[right], 0) + 1
+                if cur_hash[s[right]] == hash[s[right]]:
+                    valid +=1
 
-        return count
- ```  
+            while valid == len(hash):
+                if right - left +1 < min_length:
+                    start = left
+                    min_length = right - left + 1
+                
+                if s[left] in hash:
+                    if cur_hash[s[left]] == hash[s[left]]:
+                        valid -= 1
+                    cur_hash[s[left]] -= 1
+                left += 1
+        return "" if min_length == float('inf') else s[start: start + min_length]
+ ```
+                 
 
 
 ## 图论
