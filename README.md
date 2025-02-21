@@ -1,5 +1,20 @@
 # LeetCode hot 100 刷题记录
 
+
+## 哈希表
+### 1. 两数之和
+```python 
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+
+        hash = {}
+        for i in range(len(nums)):
+            if target - nums[i] not in hash:
+                hash[nums[i]] = i
+            else:
+                return [i, hash[target - nums[i]]]
+        return []
+```
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
