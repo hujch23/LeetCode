@@ -287,6 +287,27 @@ class Solution:
                 res.append(i - len(p) + 1)  
                 
         return res
+ ```
+
+## 字串
+
+### 560. 和为K的子数组
+前缀和的思路，但是写的时候非常傻逼没用哈希表记录前缀和，导致复杂度不行，时间复杂度：O(n)，空间复杂度：O(n)，记住！记住！记住！哈希表查找当前的sum减去目标值就行
+ ```python  
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        
+        hash = {}
+        hash[0] = 1
+        curr_sum = count = 0
+
+        for num in nums:
+            curr_sum += num
+            count += hash.get(curr_sum - k, 0)
+            hash[curr_sum] = hash.get(curr_sum, 0) + 1
+
+
+        return count
  ```  
 
 
