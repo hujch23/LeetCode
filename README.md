@@ -289,6 +289,35 @@ class Solution:
         return res
  ```
 
+### 239. 滑动窗口最大值
+哎，记起来了思路，使用双端单调队列，保持队列头是最大值，但是代码处理起来还是一堆问题，还是多练！记住：队列保存的是索引、先处理前k个即第一个窗口、先处理窗口边界（popleft）再考虑其它（pop）
+ ```python  
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        due = deque()
+        result = []
+
+        for i in range(k):
+            while due and nums[i] >= nums[due[-1]]:
+                due.pop()
+            due.append(i)
+        
+        result.append(nums[due[0]])
+
+
+        for i in range(k, len(nums)):
+            while due and due[0] <= i - k:
+                due.popleft()
+        
+            while due and nums[i] >= nums[due[-1]]:
+                due.pop()
+            due.append(i)
+            
+            result.append(nums[due[0]])
+
+        return result
+ ```
+
 ## 字串
 
 ### 560. 和为K的子数组
