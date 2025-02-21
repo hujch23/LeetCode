@@ -114,7 +114,25 @@ class Solution:
 ```
 ### 11. 盛最多水的容器
 
+时间复杂度：O(N)，双指针总计最多遍历整个数组一次、空间复杂度：O(1)，只需要额外的常数级别的空间
+```python 
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        left = 0
+        right = len(height) - 1
+        max_area = 0
 
+        while left < right:
+            if height[left] < height[right]:
+                cur_area = height[left] * (right - left)
+                max_area = max(max_area, cur_area)
+                left +=1
+            else:
+                cur_area = height[right] * (right - left)
+                max_area = max(max_area, cur_area)
+                right -=1
+        return max_area
+```
 
 ## 图论
 ### 207 课程表
