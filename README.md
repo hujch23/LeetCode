@@ -20,8 +20,23 @@ class Solution:
 
 ### 49. 字母异位词分组
 
+时间复杂度：O(n * k * log k)，其中n是字符串数量，k是最长字符串的长度、空间复杂度：O(n * k)
+```python 
+class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
 
+        hash = {}
 
+        for str in strs:
+            
+            sorted_str = ''.join(sorted(str))
+
+            if sorted_str in hash:
+                hash[sorted_str].append(str)
+            else:
+                hash[sorted_str] = [str]
+        return list(hash.values())
+```
 
 ## 图论
 ### 207 课程表
