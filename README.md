@@ -86,7 +86,33 @@ class Solution:
 ```
 
 ## 双指针
+
 ### 283. 移动零
+自己做用快慢指针记录，但是选择移动0往后交换，这样会打乱非0的顺序，正确的应该是选择向前移动非0数字，相当于0往后移
+```python 
+class Solution:
+    def moveZeroes(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        slow = 0
+        fast = 0
+    
+
+        while fast < len(nums):
+            if nums[fast] != 0:
+                nums[slow] = nums[fast]
+                slow += 1
+            fast += 1
+        
+        while slow < len(nums):
+            nums[slow] = 0
+            slow +=1
+
+        return nums
+
+```
+
 
 ## 图论
 ### 207 课程表
