@@ -222,9 +222,36 @@ class Solution:
             max_len = max(max_len, i - start + 1)
             hash[char] = i
         return max_len
-  ```                 
-            
-            
+  ```
+
+
+### 438. 找到字符串中所有字母的异位词
+
+哈希表计数+滑动窗口的方法脑子跟上了手没跟上，还得练啊！主循环：O(n)，n 是字符串 s 的长度，每次循环中的字典比较：O(k)，k 是字符集大小，总时间复杂度：O(n * k)，空间复杂度：O(Σ)，用于存储字符串p和滑动窗口中每种字母的数量。
+ ```python           
+  class Solution:
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        hash = {}
+        result = []
+        # 创建一个哈希表记录p中各字符的出现次数
+        for char in p:
+           hash[char] =  hash.get(char, 0) + 1
+
+        left = 0
+        cur_hash = {}
+        # 移动窗口
+        for right, char in enumerate(s):
+            cur_hash[char] = cur_hash.get(char, 0) + 1
+
+            if right - left + 1 > len(p):
+                cur_hash[s[left]] -= 1
+                if cur_hash[s[left]] == 0:
+                    del cur_hash[s[left]]
+                left +=1
+            if cur_hash == hash:
+                result.append(left)
+        return result
+      ```                    
 
 
 
