@@ -134,6 +134,58 @@ class Solution:
         return max_area
 ```
 
+### 15. 三数之和
+
+自己做想到了使用双指针，但是有很多没注意到:一是需要考虑重复，包括遍历的以及指针对应的，二是双指针对应一次遍历不仅仅只有一组。
+时间复杂度：O(n^2)，空间复杂度：O(1)，返回值不计入，忽略排序的栈开销。
+```python
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        if not nums or nums[0] > 0:
+            return []
+        
+        result = []
+        
+        for i in range(len(nums)-2):
+            
+            if i > 0 and nums[i] == nums[i-1]:
+                continue
+            if nums[i] > 0:
+                break
+
+            left = i + 1
+            right = len(nums) - 1
+            while left < right:
+                if nums[i] + nums[left] + nums[right] > 0:
+                    right -= 1
+                elif nums[i] + nums[left] + nums[right] < 0:
+                    left +=1
+                else:
+                    result.append([nums[i], nums[left], nums[right]])
+
+                    while left < right and nums[left] == nums[left+1]:  
+                        left += 1  
+                    while left < right and nums[right] == nums[right-1]:  
+                        right -= 1 
+
+                    left += 1
+                    right -= 1
+        
+        return result
+```         
+      
+
+                    
+
+
+                    
+            
+            
+
+
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
