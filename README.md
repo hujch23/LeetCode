@@ -206,10 +206,23 @@ class Solution:
 ```
 
 
-                    
+  ## 滑动窗口
 
+### 3. 无重复字符的最长字串
+  遍历的时候寻找窗口左边界，即重复出现的索引位置，时间复杂度：O(N)，其中N是字符串的长度。左指针和右指针分别会遍历整个字符串一次。空间复杂度：O(∣Σ∣)，其中Σ表示字符集（即字符串中可以出现的字符），∣Σ∣表示字符集的大小。在本题中没有明确说明字符集，因此可以默认为所有 ASCII 码在[0,128)内的字符，即∣Σ∣=128。我们需要用到哈希集合来存储出现过的字符，而字符最多有∣Σ∣个，因此空间复杂度为O(∣Σ∣)。
 
-                    
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        hash = {}
+        max_len = 0
+        start = 0
+        for i, char in enumerate(s):
+            start = max(start, hash.get(char, -1) + 1)
+            max_len = max(max_len, i - start + 1)
+            hash[char] = i
+        return max_len
+  ```                 
             
             
 
