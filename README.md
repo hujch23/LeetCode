@@ -376,7 +376,29 @@ class Solution:
         return "" if min_length == float('inf') else s[start: start + min_length]
  ```
                  
+## 普通数组
 
+### 53. 最大子数组和
+注意数组如果都是负数那么直接取最大值即可，搞不懂什么分治法，这不就逻辑很通顺
+ ```python  
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+
+        if max(nums) <= 0:
+            return max(nums)
+
+        max_sum = float('-inf')
+        cur_sum = 0
+
+        for i in range(len(nums)):
+            if nums[i] + cur_sum > 0:
+                cur_sum = cur_sum + nums[i]
+                max_sum = max(max_sum, cur_sum)
+            else:
+                cur_sum = 0
+
+        return  0 if max_sum == float('-inf') else max_sum 
+ ```
 
 ## 图论
 ### 207 课程表
