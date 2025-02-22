@@ -400,6 +400,33 @@ class Solution:
         return  0 if max_sum == float('-inf') else max_sum 
  ```
 
+### 56. 合并区间
+
+先排序再慢慢合并就行，需要注意的是最后一个数组的处理，如果没法合并，两个都得加进去，如果可以合并，就直接加进去不用检测之后的
+ ```python  
+class Solution:
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        if len(intervals) == 1:
+            return intervals
+
+        intervals.sort(key = lambda x:x[0])
+        result = []
+
+        for i in range(len(intervals) - 1):
+            if intervals[i + 1][0] > intervals[i][1]:
+                result.append(intervals[i])
+                if i == len(intervals) -2:
+                    result.append(intervals[i + 1])
+            else:
+                intervals[i+1] = [intervals[i][0], max(intervals[i][1], intervals[i + 1][1])]
+                if i == len(intervals) -2:
+                    result.append(intervals[i + 1])
+
+
+        return result
+ ```
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
