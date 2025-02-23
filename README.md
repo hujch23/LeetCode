@@ -620,11 +620,6 @@ class Solution:
 ### 240. 搜索二维矩阵II
 时间复杂度：O(m+n)。在搜索的过程中，如果我们没有找到target，那么我们要么将y减少1，要么将x增加1。由于(x,y)的初始值分别为(0,n−1)，因此y最多能被减少n次，x最多能被增加m次，总搜索次数为m+n。在这之后，x和y就会超出矩阵的边界
 
-作者：力扣官方题解
-链接：https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/1062538/sou-suo-er-wei-ju-zhen-ii-by-leetcode-so-9hcx/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-
 ```python
 class Solution:
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
@@ -645,6 +640,25 @@ class Solution:
         return False
 ```
 
+## 链表
+
+### 160. 相交链表
+
+烦死了，知道思路但是不知道怎么循环终止条件，原理不相交最终两个都会是None
+
+```python
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+
+        A = headA
+        B = headB
+        index = 0
+        while A != B:
+            A = A.next if A else headB
+            B = B.next if B else headA
+
+        return A
+```
 
 
 ## 图论
