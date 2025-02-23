@@ -496,9 +496,10 @@ class Solution:
         
         return n + 1
  ```
+## 矩阵
 
 ### 73. 矩阵置零
-空间复杂度 O(1)，使用矩阵的第一行和第一列作为标记
+空间复杂度 O(1)，使用矩阵的第一行和第一列作为标记，思路清晰，写代码也得速度
 
  ```python 
 class Solution:
@@ -543,6 +544,69 @@ class Solution:
 
  ```
         
+### 54. 螺旋矩阵
+
+从上下左右依次遍历，注意边界以及跳出循环的条件
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+
+        row, cols = len(matrix), len(matrix[0])
+        result = []
+        # 上/下/左/右边界
+        top = 0
+        down = row
+        left = 0
+        right =cols
+
+        while True:
+
+            for i in range(left, right):
+                result.append(matrix[top][i])
+            top += 1
+
+            if top >= down:
+                break
+                
+
+         
+            for i in range(top, down):
+                result.append(matrix[i][right-1])
+            right -= 1
+
+            if left >= right:
+                break
+
+      
+            for i in range(right-1, left-1, -1):
+                result.append(matrix[down-1][i])
+            down -= 1
+
+            if top >= down:
+                break
+
+           
+            for i in range(down - 1, top-1, -1):
+                result.append(matrix[i][left])
+            left += 1
+
+            if left >= right:
+                break
+
+        return result
+```
+        
+
+        
+
+
+
+
+       
+
+
+
         
 
 
