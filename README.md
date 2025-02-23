@@ -426,6 +426,53 @@ class Solution:
         return result
  ```
 
+### 189. 转轮数组
+
+注意k可能大于数组长度，需要取余，然后翻转翻转再翻转即可，时间复杂度是 O(n)，空间复杂度是 O(1)
+ ```python  
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+
+        def reverse_arr(nums, start, end):
+            while start < end:
+                nums[start], nums[end] = nums[end], nums[start]
+                start +=1
+                end -=1
+            
+            return nums
+
+        k = k % len(nums)
+        reverse_arr(nums, 0, len(nums)-1)
+        reverse_arr(nums, 0, k-1)
+        reverse_arr(nums, k, len(nums)-1)
+ ```  
+
+### 238. 除自身以外数组的乘积
+
+前缀积与后缀积再相乘即可
+ ```python  
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        
+        # 左边的积与右边的积相乘
+        left = [1] * len(nums)
+        right = [1] * len(nums)
+
+        for i in range(1, len(nums)):
+            left[i] = left[i-1] * nums[i-1]
+        
+        for i in range(len(nums)-2, -1, -1):
+            right[i] = right[i+1] * nums[i+1]
+
+        result = [left[i] * right[i] for i in range(len(nums))]
+        
+        return result
+ ```
+
+
 
 ## 图论
 ### 207 课程表
