@@ -661,6 +661,39 @@ class Solution:
 ```
 
 
+### 206. 反装链表
+使用迭代法
+```python
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        cur = head
+        pre = None
+        while cur:
+            temp = cur.next
+            cur.next = pre
+            pre = cur
+            cur = temp
+        return pre
+```
+使用递归的方法，最烦的就是递归，就是学不会。因为递归会从头到尾，因为要链表翻转，所以会保留两个结点，每次将两个节点翻转同时使next的节点指向None
+
+```python
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        
+        if not head or not head.next:
+            return head
+
+        newHead = self.reverseList(head.next)
+
+        head.next.next = head
+        head.next = None
+        
+        return newHead
+```
+
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
@@ -680,4 +713,102 @@ class Solution:
 ## 回溯
 ### 51 N皇后
 采用DFS回溯策略，通过逐行放置皇后的方式（保证行不冲突），使用set集合维护可用列（保证列不冲突），并利用坐标关系(行+列相等表示在同一主对角线，行-列相等表示在同一副对角线)来判断对角线冲突，当成功放置N个皇后时，将当前解加入结果集，最终返回所有可能的解
+
+## 技巧
+
+### 136. 只出现一次的数字
+做过后就会了
+```python
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        result = 0
+        for num in nums:
+            result = result ^ num
+            
+        return result
+```
+
+### 169. 多数元素
+
+有印象是类似投票，一人打全部，每次抵消最后剩下的就是最多的元素，写是写出来了，但是不够简洁
+```python
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+
+        max_sum = 1
+        result = nums[0]
+
+        for i in range(1, len(nums)):
+            if nums[i] != result:
+                max_sum -= 1
+                if max_sum == 0:
+                    result = nums[i+1]
+            else:
+                max_sum += 1
+
+        return result
+```
+
+### 75. 颜色分类
+
+有印象用三指针记录添加位置，但是代码写不对啊啊啊啊啊啊啊，遇到0：需要放置一个0、一个1、一个2，遇到1：需要放置一个1、一个2，遇到2：只需要放置一个2
+```python
+class Solution:
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+
+        nums0 = nums1 = nums2 = 0
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                nums[nums2] = 2
+                nums[nums1] = 1
+                nums[nums0] = 0
+                nums2+=1
+                nums1+=1
+                nums0+=1
+            elif nums[i] == 1:
+                nums[nums2] = 2
+                nums[nums1] = 1
+                nums1+=1
+                nums2+=1
+            else:
+                nums[nums2] = 2
+                nums2+=1
+```
+
+### 31. 下一个排列
+
+有个地方思考错误了，交换的不是从后往前数第一个大于最后一个元素的数与最后一个元素
+![image](https://github.com/user-attachments/assets/6bc19887-a3ef-440b-a9e6-500ac53b465e)
+```python
+class Solution:  
+    def nextPermutation(self, nums: List[int]) -> None:  
+        def reverse(nums, start, end):  
+            while start < end:  
+                nums[start], nums[end] = nums[end], nums[start]  
+                start += 1  
+                end -= 1  
+        
+        i = len(nums) - 2  
+        # 1. 找到第一个升序对  
+        while i >= 0 and nums[i] >= nums[i + 1]:  
+            i -= 1  
+            
+        # 2. 如果找到了升序对  
+        if i >= 0:  
+            # 从后向前找第一个大于nums[i]的数  
+            j = len(nums) - 1  
+            while j > i and nums[j] <= nums[i]:  
+                j -= 1  
+            # 交换  
+            nums[i], nums[j] = nums[j], nums[i]  
+        
+        # 3. 反转i之后的部分  
+        reverse(nums, i + 1, len(nums) - 1)
+```
+
+### 287. 寻找重复数
+
 
