@@ -497,6 +497,55 @@ class Solution:
         return n + 1
  ```
 
+### 73. 矩阵置零
+空间复杂度 O(1)，使用矩阵的第一行和第一列作为标记
+
+ ```python 
+class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        row, cols = len(matrix), len(matrix[0])
+        row_bool = False
+        cols_bool = False
+
+        # 记录第一行是否存在0
+        for j in range(cols):
+            if matrix[0][j] == 0:
+                row_bool = True
+                break
+
+        # 记录第一列是否存在0
+        for i in range(row):
+            if matrix[i][0] == 0:
+                cols_bool = True
+                break
+
+
+        for i in range(1, row):
+            for j in range(1, cols):
+                if matrix[i][j] == 0:
+                    matrix[0][j] = matrix[i][0] = 0
+        
+        for i in range(1, row):  
+            for j in range(1, cols):  
+                if matrix[i][0] == 0 or matrix[0][j] == 0:  
+                    matrix[i][j] = 0 
+        
+        if row_bool:
+             for j in range(cols):
+                matrix[0][j] = 0
+        
+        if cols_bool:
+             for i in range(row):
+                matrix[i][0] = 0
+
+ ```
+        
+        
+
+
 
 ## 图论
 ### 207 课程表
