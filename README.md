@@ -694,6 +694,55 @@ class Solution:
 
 
 
+
+
+### 141. 环形链表
+快慢指针找环
+```python
+class Solution:
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        if not head:
+            return False
+        slow = fast = head
+        
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return True
+        return False
+```
+
+### 142. 环形链表II
+
+头到环入口等于相遇点到环入口
+
+```python
+class Solution:
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return None
+        dummy = ListNode()
+        dummy.next = head
+        slow = fast = dummy
+        
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                slow = dummy
+                while True:
+                    slow = slow.next
+                    fast = fast.next
+                    if slow == fast:
+                        return slow
+
+
+        return None
+```
+
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
@@ -811,4 +860,26 @@ class Solution:
 
 ### 287. 寻找重复数
 
+不能修改数组完全没思路哎，还真是快慢指针，索引对应的i.next = nums[i]，然后就是找环的入口
+
+```python
+class Solution:  
+    def findDuplicate(self, nums: List[int]) -> int:  
+        # 1. 找到相遇点  
+        slow = fast = nums[0]  
+        while True:  
+            slow = nums[slow]          # 慢指针走一步  
+            fast = nums[nums[fast]]    # 快指针走两步  
+            if slow == fast:           # 比较指针位置而不是值  
+                break  
+        
+        # 2. 找到环的入口  
+        slow = nums[0]                 # 慢指针回到起点  
+        while slow != fast:            # 两个指针都走一步，直到相遇  
+            slow = nums[slow]  
+            fast = nums[fast]  
+        
+        return slow
+
+```
 
