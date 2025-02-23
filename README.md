@@ -471,6 +471,33 @@ class Solution:
         return result
  ```
 
+### 41. 缺失的第一个正数
+
+使用hash表记录符合直观,但是复杂度不符合,思路是将索引与值对应原地修改数组,但是原地修改一直有点问题,注意捋清楚是用While,平均下来，每个数只需要看一次就可以了,时间复杂度：O(N),空间复杂度：O(1)
+
+ ```python 
+class Solution:  
+    def firstMissingPositive(self, nums: List[int]) -> int:  
+        n = len(nums)  
+        
+        # 第一次遍历：把数字放到正确的位置上  
+        for i in range(n):  
+            # nums[i] 应该放在 nums[i]-1 的位置上  
+            # 比如 1 应该放在索引 0 的位置
+            # 注意需要用while, 因为得一直交换,不然会漏掉交换
+            while 1 <= nums[i] <= n and nums[nums[i]-1] != nums[i]:  
+                # 交换 nums[i] 和 nums[nums[i]-1]  
+                nums[nums[i]-1], nums[i] = nums[i], nums[nums[i]-1]  
+        
+        # 第二次遍历：检查每个位置的数字是否正确  
+        for i in range(n):  
+            if nums[i] != i + 1:  
+                return i + 1  
+        
+        return n + 1
+ ```python 
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
