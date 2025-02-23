@@ -452,27 +452,24 @@ class Solution:
 
 ### 238. 除自身以外数组的乘积
 
-前缀积与后缀积再相乘即可
+前缀积与后缀积再相乘即可，但是为了优化空间复杂度，可以在计算后缀积时直接与前缀积相乘
  ```python  
 class Solution:
     def productExceptSelf(self, nums: List[int]) -> List[int]:
         
         # 左边的积与右边的积相乘
-        left = [1] * len(nums)
-        right = [1] * len(nums)
+        result = [1] * len(nums)
 
         for i in range(1, len(nums)):
-            left[i] = left[i-1] * nums[i-1]
-        
-        for i in range(len(nums)-2, -1, -1):
-            right[i] = right[i+1] * nums[i+1]
+            result[i] = result[i - 1] * nums[i - 1]
 
-        result = [left[i] * right[i] for i in range(len(nums))]
+        right = 1
+        for i in range(len(nums)-1, -1, -1):
+            result[i] = result[i] * right
+            right = right * nums[i]
         
         return result
  ```
-
-
 
 ## 图论
 ### 207 课程表
