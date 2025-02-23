@@ -597,17 +597,53 @@ class Solution:
         return result
 ```
         
+### 48. 旋转图像
 
-        
+注意对角线折叠的边界，不要折叠两次了
+```python
+class Solution:
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        # 沿着对角线折叠,然后就是轴对称了
 
+        for i in range(len(matrix)):
+            for j in range(i):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
 
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])//2):
+                matrix[i][j], matrix[i][len(matrix[0]) - j - 1] = matrix[i][len(matrix[0]) - j - 1],matrix[i][j]
+```    
 
+### 240. 搜索二维矩阵II
+时间复杂度：O(m+n)。在搜索的过程中，如果我们没有找到target，那么我们要么将y减少1，要么将x增加1。由于(x,y)的初始值分别为(0,n−1)，因此y最多能被减少n次，x最多能被增加m次，总搜索次数为m+n。在这之后，x和y就会超出矩阵的边界
 
-       
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/search-a-2d-matrix-ii/solutions/1062538/sou-suo-er-wei-ju-zhen-ii-by-leetcode-so-9hcx/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
+```python
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
 
+        m, n = len(matrix), len(matrix[0])
 
-        
+        row = 0
+        cols = n - 1
+
+        while 0 <= row < m and 0 <= cols < n:
+            if matrix[row][cols] == target:
+                return True
+            elif matrix[row][cols] > target:
+                cols -= 1
+            else:
+                row += 1
+
+        return False
+```
 
 
 
