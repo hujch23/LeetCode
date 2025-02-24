@@ -860,6 +860,81 @@ class Solution:
 - 特殊情况，当翻转部分长度不足k时，在定位end完成后，end==null，已经到达末尾，说明题目已完成，直接返回即可
 ![image](https://github.com/user-attachments/assets/4ca0f2a2-cd68-4d1b-9dac-aaeec7960b46)
 
+```python
+class Solution:  
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:  
+        
+        dummy = ListNode(next  = head)
+        pre = end = dummy
+
+        def reverse(head):
+            pre = None
+            cur = start
+            while cur:
+                temp = cur.next
+                cur.next = pre
+                pre = cur
+                cur = temp
+            return pre
+
+        while end.next:
+
+            # 寻找翻转的起点和终点
+            for _ in range(k):
+                end = end.next
+                if not end:
+                    return dummy.next
+
+            start = pre.next
+
+            # 翻转前保留下一次翻转的起点
+            next_begin = end.next
+
+            # 翻转并重连
+            pre.next = None  # 断开前面的连接  
+            end.next = None  # 断开后面的连接
+            pre.next = reverse(start)
+            start.next = next_begin
+
+            # 重置
+            pre = end = start
+
+        return dummy.next
+```
+
+### 138. 随机链表的复制
+
+好歹看得懂题，思路是使用哈希映射，时间复杂度 O(N) ： 两轮遍历链表，使用 O(N) 时间。空间复杂度 O(N) ： 哈希表 dic 使用线性大小的额外空间
+```python
+class Solution:
+    def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+        if not head:
+            return None
+        hash_map = {}
+
+        cur = head
+        while cur:
+            hash_map[cur] = Node(cur.val)
+            cur = cur.next
+
+        cur = head
+        while cur:
+            if cur.next:
+                hash_map[cur].next = hash_map[cur.next]
+            if cur.random:
+                hash_map[cur].random = hash_map[cur.random]
+
+            cur = cur.next
+
+        return hash_map[head]
+```
+还有一种方法是拼接 + 拆分 ABC--->AABBCC，然后第二个A的random不就是第一个A的random的next，主要是如何扩展以及去掉不需要的节点
+![image](https://github.com/user-attachments/assets/b2b782ce-cfea-489e-8f2b-401363ce5d4e)
+
+
+
+
+
 ## 图论
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
