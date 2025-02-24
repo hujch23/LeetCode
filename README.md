@@ -969,7 +969,7 @@ class Solution:
 
 ### 148. 排序链表
 
-逆天了这题
+逆天了这题：外层循环：size每次翻倍（1,2,4,8...）直到size大于等于链表长度，内层循环：每次取出两个长度为size的子链表，使用split函数分割链表，使用merge函数合并有序链表，维护已排序部分的尾节点tail
 
 ```python
 class Solution:
