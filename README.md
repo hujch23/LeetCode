@@ -800,7 +800,65 @@ class Solution:
         return dummy.next
 ```    
 
-           
+
+### 19. 删除链表的倒数第N个节点
+傻逼一样想到的是翻转再翻转链表，还不如直接循环计算长度呢。使用双指针能够一遍扫描，快指针先走n步
+```python
+class Solution:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+
+        dummy = ListNode(0)
+        dummy.next = head
+
+        slow = fast = dummy
+
+        for _ in range(n):
+            fast = fast.next
+        
+        while fast.next:
+            slow = slow.next
+            fast = fast.next
+
+        slow.next = slow.next.next
+
+        return dummy.next
+```
+
+### 24. 两两交换链表中的节点
+注意和链表翻转的交换是不一样的，两个题要快速捋清楚写出来
+```python
+class Solution:
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+
+        if not head or not head.next:
+            return head
+
+        dummy = ListNode(0)
+        dummy.next = head
+        pre = dummy
+
+        while pre.next and pre.next.next:
+            left = pre.next
+            right = pre.next.next
+
+            left.next = right.next
+            right.next = left
+            pre.next = right
+
+            pre = left
+
+        return dummy.next
+  ```
+
+### 25. K个一维数组翻转
+- 链表分区为已翻转部分+待翻转部分+未翻转部分
+- 每次翻转前，要确定翻转链表的范围，这个必须通过k此循环来确定
+- 需记录翻转链表前驱和后继，方便翻转完成后把已翻转部分和未翻转部分连接起来
+- 初始需要两个变量pre和end，pre代表待翻转链表的前驱，end代表待翻转链表的末尾
+- 经过k此循环，end到达末尾，记录待翻转链表的后继next = end.next
+- 翻转链表，然后将三部分链表连接起来，然后重置pre和end指针，然后进入下一次循环
+- 特殊情况，当翻转部分长度不足k时，在定位end完成后，end==null，已经到达末尾，说明题目已完成，直接返回即可
+![image](https://github.com/user-attachments/assets/4ca0f2a2-cd68-4d1b-9dac-aaeec7960b46)
 
 ## 图论
 ### 207 课程表
