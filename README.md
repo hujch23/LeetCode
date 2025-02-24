@@ -742,6 +742,7 @@ class Solution:
 ```
 
 ### 21. 合并有序链表 
+时间复杂度：O(n+m)，其中n和m分别为两个链表的长度。因为每次循环迭代中，l1和l2只有一个元素会被放进合并链表中， 因此while循环的次数不会超过两个链表的长度之和
 ```python
 class Solution:
     def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
@@ -770,7 +771,7 @@ class Solution:
 ```
 
 ### 2. 两数相加
-知道应该怎么做，但是写的时候逻辑不是很严谨，特别是进位判断写的乱七八糟，最好用数值存储结果计算，能够有效处理各种边界
+知道应该怎么做，但是写的时候逻辑不是很严谨，特别是进位判断写的乱七八糟，最好用数值存储结果计算，能够有效处理各种边界，时间复杂度：O(max(N,M))，其中 N 和 M 是两个链表的长度，空间复杂度：O(max(N,M))，需要创建一个新的链表存储结果
 ```python
 class Solution:
     def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
