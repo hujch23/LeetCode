@@ -741,7 +741,65 @@ class Solution:
         return None
 ```
 
+### 21. 合并有序链表 
+```python
+class Solution:
+    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
 
+        node1 = list1
+        node2 = list2
+
+        dummy = ListNode(0)
+        cur_node = dummy
+
+        while node1 and node2:
+            if node1.val < node2.val:
+                cur_node.next = node1
+                node1 = node1.next
+            else:
+                cur_node.next = node2
+                node2 = node2.next
+            cur_node = cur_node.next
+
+        if node1:
+            cur_node.next = node1
+        if node2:
+            cur_node.next = node2
+        
+        return dummy.next
+```
+
+### 2. 两数相加
+知道应该怎么做，但是写的时候逻辑不是很严谨，特别是进位判断写的乱七八糟，最好用数值存储结果计算，能够有效处理各种边界
+```python
+class Solution:
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+
+        dummy = ListNode(0)
+        cur_node = dummy
+        carry = 0
+
+        while l1 or l2 or carry:
+            # 获取两个链表当前节点的值
+            x = l1.val if l1 else 0
+            y = l2.val if l2 else 0
+
+            # 计算和与进位
+            total = x + y + carry
+            carry = total // 10
+
+            # 创建新节点
+            cur_node.next = ListNode(total % 10)
+
+            # 移动指针
+            cur_node = cur_node.next
+            l1 = l1.next if l1 else l1
+            l2 = l2.next if l2 else l2
+            
+        return dummy.next
+```    
+
+           
 
 ## 图论
 ### 207 课程表
