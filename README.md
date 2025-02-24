@@ -928,11 +928,133 @@ class Solution:
 
         return hash_map[head]
 ```
-还有一种方法是拼接 + 拆分 ABC--->AABBCC，然后第二个A的random不就是第一个A的random的next，主要是如何扩展以及去掉不需要的节点
+还有一种方法是拼接 + 拆分 ABC--->AABBCC，然后第二个A的random不就是第一个A的random的next，主要是如何扩展以及去掉不需要的节点。时间复杂度 O(N) ： 三轮遍历链表，使用 O(N) 时间。
+空间复杂度 O(1) ： 节点引用变量使用常数大小的额外空间
 ![image](https://github.com/user-attachments/assets/b2b782ce-cfea-489e-8f2b-401363ce5d4e)
 
 
+```python
+class Solution:
+    def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+        if not head:
+            return None
+        
+        # 链表扩展
+        cur = head
+        while cur:
+            temp = Node(cur.val)
+            temp.next = cur.next
+            cur.next = temp
+            cur = temp.next
 
+        # 构建新节点的random指向
+        cur = head
+        while cur:
+            if cur.random:
+                cur.next.random = cur.random.next
+            cur = cur.next.next
+
+        # 链表拆分
+        cur = res = head.next
+        pre = head
+        while cur.next:
+            pre.next = pre.next.next
+            cur.next = cur.next.next
+            pre = pre.next
+            cur = cur.next
+        pre.next = None
+
+        return res
+```
+
+### 148. 排序链表
+
+逆天了这题
+
+```python
+class Solution:
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+
+        if not head or not head.next:
+            return head
+
+        # 合并两个有序链表，返回合并后的头和尾  
+        def merge(node1, node2):
+            dummy = ListNode(0)
+            tail = dummy
+
+            while node1 and node2:
+                if node1.val > node2.val:
+                    tail.next = node2
+                    node2 = node2.next
+                else:
+                    tail.next = node1
+                    node1 = node1.next
+                tail = tail.next
+
+            tail.next = node1 if node1 else node2
+
+            while tail.next:
+                tail = tail.next
+
+            return [dummy.next, tail]
+
+        # 分割链表，返回第size个节点，并断开连接
+        def split(head, size):
+            if not head:
+                return None
+            for i in range(size-1):
+                if not head.next:
+                    break
+                head = head.next
+
+            next_head = head.next
+            head.next = None
+
+            return next_head
+
+        dummy = ListNode(0)
+        dummy.next = head
+
+        
+
+        # 计算链表长度
+        cur = head
+        length = 0
+        while cur:
+            length += 1
+            cur = cur.next
+        
+
+        # size表示每次归并的子链表长度，从1开始，每次翻倍  
+        size = 1
+        while size < length:
+            cur = dummy.next
+            tail = dummy  # tail表示分割好的结尾
+
+            while cur: # 因为需要遍历链表进行分割
+                if not cur.next:
+                    tail.next = cur
+                    break
+                left = cur
+                right = split(left, size)  # 分割出第二个链表的头 
+                cur = split(right, size)  # 分割出下一次归并的头
+
+                merged = merge(left, right)
+                tail.next = merged[0]   # 连接已排序部分  
+                tail = merged[1]  # 更新tail为合并后的尾节点 
+
+            size *= 2
+
+        return dummy.next
+```
+       
+
+
+
+
+
+        
 
 
 ## 图论
