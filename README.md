@@ -1051,10 +1051,76 @@ class Solution:
        
 
 
+### 23 合并K个升序链表
 
+简单粗暴直接凉凉，时间复杂度：O(k^2n)，空间复杂度：没有用到与 k 和 n 规模相关的辅助空间，故渐进空间复杂度为 O(1)。
+```python
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
 
+        def merge(node1, node2):
+            dummy = ListNode(0)
+            cur = dummy
+            while node1 and node2:
+                if node1.val > node2.val:
+                    cur.next = node2
+                    node2 = node2.next
+                else:
+                    cur.next = node1
+                    node1 = node1.next
+                cur = cur.next
+            cur.next = node1 if node1 else node2
 
+            return dummy.next
         
+        if len(lists) == 0:
+            return None
+        
+        if len(lists) == 1:
+            return lists[0]
+        
+        # 初始化结果为第一个链表  
+        result = lists[0]  
+        
+        # 两两合并  
+        for i in range(1, len(lists)):  
+            if lists[i]:  # 确保当前链表不为空  
+                result = merge(result, lists[i])  
+                
+        return result 
+ ```
+
+![image](https://github.com/user-attachments/assets/0b582e7e-87ba-4565-82bf-89033efcd819)
+
+ ```python     
+class Solution:  
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:  
+        heap = []  
+        
+        # 1. 初始化堆：将所有链表的第一个节点入堆  
+        for i, node in enumerate(lists):  
+            if node:  
+                heappush(heap, (node.val, i, node))  
+                # 三元组：(节点值，链表索引，节点引用)  
+                # 节点值用于排序  
+                # 链表索引用于在值相同时保持稳定性  
+                # 节点引用用于构建结果链表  
+        
+        dummy = ListNode(0)  
+        cur = dummy  
+        
+        # 2. 不断从堆中取出最小值，并添加下一个节点  
+        while heap:  
+            val, i, node = heappop(heap)  # 取出最小值  
+            cur.next = node               # 连接到结果链表  
+            cur = cur.next               # 移动指针  
+            if node.next:                # 如果还有后续节点  
+                heappush(heap, (node.next.val, i, node.next))  # 加入堆中  
+        
+        return dummy.next
+```
+
+
 
 
 ## 图论
