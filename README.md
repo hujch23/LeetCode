@@ -1229,6 +1229,140 @@ class Solution:
 
         return result
 ```
+### 104. 二叉树的最大深度
+
+递归实现：时间复杂度O(n)，空间复杂度O(h)，BFS实现：时间复杂度O(n)，空间复杂度O(w)，其中n是节点数，h是树高，w是最大宽度
+```python 
+class Solution:
+    def maxDepth(self, root: Optional[TreeNode]) -> int:
+
+        if not root:
+            return 0
+        
+        due = deque([root])
+        max_depth = 0
+        
+
+        while due:
+            max_depth += 1
+            for _ in range(len(due)):
+                node = due.popleft()
+
+                if node.left:
+                    due.append(node.left)
+
+                if node.right:
+                    due.append(node.right)
+
+        return max_depth
+```
+```python 
+class Solution:  
+    def maxDepth(self, root: Optional[TreeNode]) -> int:  
+        if not root:  
+            return 0  
+        
+        # 返回左右子树的最大深度 + 1（当前层）  
+        return max(self.maxDepth(root.left), self.maxDepth(root.right)) + 1
+```
+
+### 226. 翻转二叉树
+层次遍历即可
+```python 
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+
+        if not root:
+            return None
+
+        due = deque([root])
+        while due:
+            node = due.popleft()
+            node.left, node.right = node.right, node.left 
+            if node.left:
+                due.append(node.left)
+            if node.right:
+                due.append(node.right)
+
+        return root
+```
+### 101. 对称二叉树
+有点印象但不多，稀里糊涂的逻辑不清晰
+```python 
+class Solution:
+    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+
+        if not root:
+            return True
+
+        due = deque([(root.left, root.right)])
+
+        while due:
+            left, right = due.popleft()
+            if not left and not right:
+                continue
+            if not left or not right or left.val != right.val:
+                return False
+
+            due.append((left.left, right.right))
+            due.append((left.right, right.left))
+            
+        return True
+```
+
+### 543. 二叉树的直径
+得多多联系递归啊！！！！！！！
+```python 
+class Solution:
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:  
+        self.max_diameter = 0  
+    
+        def depth(node):  
+            if not node:  
+                return 0  
+        
+            left_depth = depth(node.left)   # 左子树深度  
+            right_depth = depth(node.right) # 右子树深度  
+            
+            # 计算经过当前节点的最长路径（边的数量）  
+            # left_depth + right_depth 就是边的数量  
+            self.max_diameter = max(self.max_diameter, left_depth + right_depth)  
+            
+            # 返回当前节点到叶子节点的最大深度  
+            return max(left_depth, right_depth) + 1  # 这里要加1，因为是计算深度  
+    
+        depth(root)  
+        return self.max_diameter
+```
+
+### 102. 二叉树的层序遍历
+```python 
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        result = []
+        if not root:
+            return []
+
+        due = deque([root])
+        while due:
+            cur_level = []
+            level_size = len(due)
+
+            for i in range(level_size):
+                node = due.popleft()
+                cur_level.append(node.val)
+
+                if node.left:
+                    due.append(node.left)
+                if node.right:
+                    due.append(node.right)
+            result.append(cur_level)
+        return result
+```
+
+### 108. 将有序数组转换为二叉搜索树
+
+知道对应的就是中序数组，但是好像不会写数组转二叉树，
 
 
 ## 图论
