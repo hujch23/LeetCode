@@ -1362,7 +1362,25 @@ class Solution:
 
 ### 108. 将有序数组转换为二叉搜索树
 
-知道对应的就是中序数组，但是好像不会写数组转二叉树，
+知道对应的就是中序数组，但是好像不会写数组转二叉树，看到二叉树就要想到递归！！！！！！！！！
+```python
+class Solution:
+    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+        
+        def traversal(nums, left, right):
+            if left > right:
+                return None
+
+            mid = (right + left) // 2
+
+            root = TreeNode(nums[mid])
+            root.left = traversal(nums, left, mid-1)
+            root.right = traversal(nums, mid+1, right)
+
+            return root
+
+        return traversal(nums, 0, len(nums)-1)
+```
 
 
 ## 图论
