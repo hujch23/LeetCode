@@ -1121,6 +1121,114 @@ class Solution:
 ```
 
 
+### 146. LRU缓存
+真要命的题，添加到头部：add_to_head()，哈希表存储key到节点的映射，删除节点：remove_node()，移动到头部：move_to_head()，删除尾部：remove_tail()
+ ```python 
+class ListNode:
+    def __init__(self, key, value, pre = None, next= None):
+        self.key = key
+        self.value = value
+        self.pre = None
+        self.next = None
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.tail = ListNode(0, 0)
+        self.head = ListNode(0, 0)
+        self.tail.pre = self.head
+        self.head.next = self.tail
+        self.hash_map = {}
+
+    def get(self, key: int) -> int:
+        if key in self.hash_map:
+            node =  self.hash_map[key]
+            # 因为进行了查询，所以需要移动到最前边
+            self.move_to_head(node)
+            return node.value
+        else:
+            return -1
+
+    def put(self, key: int, value: int) -> None:
+        # 如果key在hash_map中，替换值并移动到最前
+        if key in self.hash_map:
+            self.hash_map[key].value = value
+            self.move_to_head(self.hash_map[key])
+        else:
+            node = ListNode(key, value)
+            self.hash_map[key] = node
+            self.add_to_head(node)
+            # 如果超出容量，删除尾部节点  
+            if len(self.hash_map) > self.capacity:  
+                self.remove_tail()
+    
+    def move_to_head(self, node):
+
+        # 先将node去掉再移到最前边
+        self.remove_node(node)
+        self.add_to_head(node)
+
+    def add_to_head(self, node):
+        node.next = self.head.next
+        node.pre = self.head
+        self.head.next.pre = node
+        self.head.next = node
+
+    def remove_node(self, node):
+        node.pre.next = node.next
+        node.next.pre = node.pre
+        
+    def remove_tail(self):
+        last_node = self.tail.pre
+        self.remove_node(last_node)
+        self.hash_map.pop(last_node.key)
+ ```
+
+## 二叉树
+
+### 94. 二叉树的中序遍历
+二叉树的前、中以及后序遍历同统一递归模板
+```python 
+class Solution:
+    def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+
+        result = []
+        
+
+        def inorder(root):
+            if not root:
+                return 
+
+            inorder(root.left)
+            result.append(root.val)
+            inorder(root.right)
+
+        inorder(root)
+
+        return result
+ ```
+也可使用遍历的方法，使用栈
+```python 
+class Solution:
+    def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        
+        stack = []
+        result = []
+        curr = root
+
+        while stack or curr:
+            while curr:
+                stack.append(curr)
+                curr = curr.left
+            
+            curr = stack.pop()
+            result.append(curr.val)
+
+            curr = curr.right
+
+        return result
+```
 
 
 ## 图论
