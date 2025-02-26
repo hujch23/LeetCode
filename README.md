@@ -1382,6 +1382,258 @@ class Solution:
         return traversal(nums, 0, len(nums)-1)
 ```
 
+### 98. 验证二叉搜索树
+
+中序遍历验证是否是递增数组就行
+```python
+class Solution:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+
+        result = []
+
+        def inorder(root):
+            if not root:
+                return 
+            inorder(root.left)
+            result.append(root.val)
+            inorder(root.right)
+
+        inorder(root)
+
+        for i in range(len(result)-1):
+            if result[i] >= result[i+1]:
+                return False
+
+        return True
+```
+
+### 203. 二叉搜索树中的第K小的元素
+继续中序遍历即可，但是进阶要求如果树频繁变咋整，用中序遍历数组每次都得变，既然是二叉搜索树，那么左子树小于根节点小于右子树，那就看看k与左子树的节点数的比较区搜索呗
+```python
+class Solution:
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+
+        
+        nums = []
+
+        def inorder(root):
+            if not root:
+                return 
+
+            inorder(root.left)
+            nums.append(root.val)
+            inorder(root.right)
+
+        inorder(root)
+
+        return nums[k-1]
+```
+```python
+class Solution:
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        
+        left_count = self.findChildren(root.left)
+
+        if left_count + 1 == k:
+            return root.val
+        elif left_count + 1 < k:
+            return self.kthSmallest(root.right, k - left_count - 1)
+        else:
+            return self.kthSmallest(root.left, k)
+    
+    def findChildren(self, root):
+        if not root:
+            return 0
+        return self.findChildren(root.left) + self.findChildren(root.right) + 1
+```
+
+### 193. 二叉树的右视图
+层序遍历得到每层的节点值即可，每次留下最右边的，但有一说一，递归的方法真的叼
+```python
+class Solution:
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+
+        if not root:
+            return []
+        
+        due = deque([root])
+        res = []
+        while due:
+            cur_level = []
+            level_size = len(due)
+            for _ in range(len(due)):
+                node = due.popleft()
+                cur_level.append(node.val)
+                if node.left:
+                    due.append(node.left)
+                if node.right:
+                    due.append(node.right)
+            if len(cur_level) > 0:
+                res.append(cur_level[-1])
+                
+        return res
+```
+```python
+class Solution:
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        ans = []
+        def dfs(node: Optional[TreeNode], depth: int) -> None:
+            if node is None:
+                return
+            if depth == len(ans):  # 这个深度首次遇到
+                ans.append(node.val)
+            dfs(node.right, depth + 1)  # 先递归右子树，保证首次遇到的一定是最右边的节点
+            dfs(node.left, depth + 1)
+        dfs(root, 0)
+        return ans
+
+```
+
+### 114. 二叉树展开为链表
+思路是有的，就是慢慢移，但是代码写的不三不四，既然是左边移到右边，那就检测左边，暂留右边。当然这个题还可以使用递归或者迭代实现
+
+```python
+class Solution:
+    def flatten(self, root: Optional[TreeNode]) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        while root:
+            if root.left:
+                right_subtree = root.right
+                root.right = root.left
+                root.left = None
+
+                cur = root
+                while cur.right:
+                    cur = cur.right
+                cur.right = right_subtree
+
+            root = root.right
+```
+
+### 105. 从前序遍历与中序遍历构造二叉树
+
+大概记得点点思路，在下标画横线就想起来了，但是不会用递归，尴尬死了，递归简洁版使用index，此方法空间复杂度提高
+```python
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        if not preorder:
+            return None
+        root = TreeNode(preorder[0])
+        mid = inorder.index(preorder[0])
+
+        root.left = self.buildTree(preorder[1:mid+1], inorder[0:mid])
+        root.right = self.buildTree(preorder[mid+1:], inorder[mid+1:])
+
+        return root
+       
+```
+
+通过传递 preorder 和 inorder 的索引范围，而不是直接切片，避免创建新的列表。这样可以将切片操作的空间复杂度从 O(n^2)降低到O(mn)
+
+```python
+class Solution:  
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:  
+        # 使用一个哈希表来快速定位 inorder 中的索引  
+        inorder_index_map = {val: idx for idx, val in enumerate(inorder)}  
+
+        def helper(pre_start, pre_end, in_start, in_end):  
+            # 如果索引范围无效，返回 None  
+            if pre_start > pre_end or in_start > in_end:  
+                return None  
+
+            # 根节点的值是 preorder 的第一个元素  
+            root_val = preorder[pre_start]  
+            root = TreeNode(root_val)  
+
+            # 找到根节点在 inorder 中的位置  
+            mid = inorder_index_map[root_val]  
+
+            # 左子树的节点数量  
+            left_size = mid - in_start  
+
+            # 构建左子树  
+            root.left = helper(pre_start + 1, pre_start + left_size, in_start, mid - 1)  
+
+            # 构建右子树  
+            root.right = helper(pre_start + left_size + 1, pre_end, mid + 1, in_end)  
+
+            return root  
+
+        # 调用辅助函数，初始范围是整个 preorder 和 inorder  
+        return helper(0, len(preorder) - 1, 0, len(inorder) - 1)
+
+```
+
+### 437. 路径总和
+印象中是递归加回溯，重点是搞清楚输入参数以及递归流程，记得之前做过的前缀和？
+```python
+class Solution:
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:
+
+        self.hash_map = {0:1}
+
+        return self.dfs(root, 0, targetSum)
+
+    def dfs(self, root, curr_sum, targetSum):
+        if not root:
+            return 0
+        curr_sum += root.val
+        count = self.hash_map.get(curr_sum - targetSum, 0)
+        self.hash_map[curr_sum] = self.hash_map.get(curr_sum, 0) + 1
+
+        count += self.dfs(root.left, curr_sum, targetSum)
+        count += self.dfs(root.right, curr_sum, targetSum)
+
+        self.hash_map[curr_sum] -= 1
+
+        return count
+```
+
+### 236. 二叉树的最近公共祖先
+背下来吧，垃圾题目完全不理解
+```python
+class Solution:  
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':  
+        # 如果当前节点为空，或者当前节点是 p 或 q，则直接返回当前节点  
+        if not root or root == p or root == q:  
+            return root  
+
+        # 在左子树中递归查找最近公共祖先  
+        left = self.lowestCommonAncestor(root.left, p, q)  
+        # 在右子树中递归查找最近公共祖先  
+        right = self.lowestCommonAncestor(root.right, p, q)  
+
+        # 如果左右子树的递归结果都不为空，说明 p 和 q 分别在当前节点的左右子树中  
+        if left and right:  
+            return root  
+
+        # 如果只有一边不为空，说明最近公共祖先在这一边  
+        return left if left else right  
+```
+
+
+### 124. 二叉树中的最大路径和
+记住，递归返回的只能取一边，但是计算最大值时都需要加上，同时负数去掉
+```python
+class Solution:
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        self.maxPath = float('-inf')
+        self.dfs(root)
+        return self.maxPath
+
+    def dfs(self, root):
+        if not root:
+            return 0
+
+        left = max(self.dfs(root.left), 0)
+        right = max(self.dfs(root.right), 0)
+
+        self.maxPath = max(self.maxPath, left + right + root.val)
+
+        return max(left, right) + root.val
+ ```       
 
 ## 图论
 ### 207 课程表
