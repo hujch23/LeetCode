@@ -1780,11 +1780,103 @@ class Solution:
 ![image](https://github.com/user-attachments/assets/4ecd1660-cd65-46de-a0e6-b3ad7841a240)
 
 
+### 79. 单词搜索
 
+```python
+def exist(self, board: List[List[str]], word: str) -> bool:  
+    count = {}  
+    m, n = len(board), len(board[0])  
 
+    # 统计网格中的字符频率  
+    for i in range(m):  
+        for j in range(n):  
+            count[board[i][j]] = count.get(board[i][j], 0) + 1  
 
+    # 检查word中的字符是否超过网格中的字符  
+    for c in word:  
+        if c not in count or word.count(c) > count[c]:  
+            return False  
+
+    # 看看word的首尾字符那个在网格中频率低，从低的开始搜  
+    if count.get(word[0], 0) > count.get(word[-1], 0):  
+        word = word[::-1]  
+
+    def dfs(i, j, k):  
+        if k == len(word):  # k为匹配上的字符数  
+            return True  
+        if i < 0 or i >= m or j < 0 or j >= n or board[i][j] != word[k]:  
+            return False  
+        temp = board[i][j]  
+        board[i][j] = '#'  
+        result = dfs(i-1, j, k+1) or dfs(i+1, j, k+1) or dfs(i, j+1, k+1) or dfs(i, j-1, k+1)  
+        board[i][j] = temp  
+        return result  
+
+    # 递归搜索  
+    for i in range(m):  
+        for j in range(n):  
+            if board[i][j] == word[0] and dfs(i, j, 0):  
+                return True  
+    
+    return False
+```
+
+### 131. 分割回文串
+回溯算法框架下的"选择"是分割点的位置，用回文判断作为剪枝条件，每个位置都可能是分割点，但只有形成回文才继续递归，需要维护当前的分割方案并及时回溯
+```python
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+
+        def is_reverse(start, end):
+            while start < end:
+                if s[start] != s[end]:
+                    return False
+                start += 1
+                end -= 1
+            return True
+
+        def backtrack(start):
+            if start == len(s):
+                res.append(path[:])
+                return 
+            
+            for end in range(start, len(s)):
+                if is_reverse(start, end):
+                    path.append(s[start:end+1])
+                    backtrack(end + 1)
+                    path.pop()
+        res = []
+        path = []
+
+        backtrack(0)
+
+        return res
+```
 ### 51 N皇后
-采用DFS回溯策略，通过逐行放置皇后的方式（保证行不冲突），使用set集合维护可用列（保证列不冲突），并利用坐标关系(行+列相等表示在同一主对角线，行-列相等表示在同一副对角线)来判断对角线冲突，当成功放置N个皇后时，将当前解加入结果集，最终返回所有可能的解
+采用DFS回溯策略，通过逐行放置皇后的方式（保证行不冲突），使用set集合维护可用列（保证列不冲突），记录皇后每行所在位置，并利用坐标关系(行+列相等表示在同一主对角线，行-列相等表示在同一副对角线)来判断对角线冲突，当成功放置N个皇后时，将当前解加入结果集，最终返回所有可能的解
+```python
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+
+         # 记录可用列
+        s = set(range(n))
+        # 记录每一行皇后所在位置
+        col = [0] * n
+        res = []
+
+        def dfs(i, s):
+            if i == n:
+                res.append(['.'*col[i] + 'Q' + '.'*(n - col[i] - 1)  for i in range(n) ])
+                return
+
+            for j in s:
+                if all(x + col[x] != i + j and x - col[x] != i - j for x in range(i)):
+                    col[i] = j
+                    dfs(i+1, s - {j})
+
+        dfs(0, s)
+        return res
+```
 
 ## 技巧
 
