@@ -1652,6 +1652,110 @@ class Solution:
 单调栈：当遇到一个小于栈顶的元素时，说明找到了栈顶元素的右边界，栈保持递增，所以栈顶下面的元素就是左边第一个小于当前高度的位置，这样就能确定一个矩形的左右边界，从而计算面积
 
 ## 回溯
+
+### 46. 全排列
+
+感觉回溯忘记的一干二净了，凭着记忆写出来了一点点.核心思路是：用一个数组记录当前路径，用一个数组标记已经使用过的数字，在每一步中，选择一个未使用的数字加入路径，递归处理下一个位置，回溯时撤销选择，继续尝试其他可能
+```python
+class Solution:  
+    def permute(self, nums: List[int]) -> List[List[int]]:  
+        res = []  
+        path = []  # 添加路径数组  
+        used = [False] * len(nums)  # 添加访问标记数组  
+        self.dfs(nums, path, used, res)  
+        return res  # 添加返回值  
+
+    def dfs(self, nums, path, used, res):  
+        # 当路径长度等于nums长度时，找到一个排列  
+        if len(path) == len(nums):  
+            res.append(path[:])  
+            return  
+
+        for i in range(len(nums)):  
+            # 如果当前数字已经使用过，跳过  
+            if used[i]:  
+                continue  
+            
+            # 选择当前数字  
+            path.append(nums[i])  
+            used[i] = True  
+            
+            # 递归  
+            self.dfs(nums, path, used, res)  
+            
+            # 回溯，撤销选择  
+            path.pop()  
+            used[i] = False
+```
+
+### 78. 子集
+
+注意当前的循环会重复选择之前的元素，需要一个起始索引来避免重复；子集的长度确实应该 <= 原数组长度，但不应该在这里就返回，实际上每个路径都是一个有效的子集，应该无条件添加
+```python
+class Solution:  
+    def subsets(self, nums: List[int]) -> List[List[int]]:  
+        res = []  
+        self.dfs(nums, [], 0, res)  # 添加起始索引参数  
+        return res  
+
+    def dfs(self, nums, path, start, res):  
+        # 当前路径就是一个子集，直接添加  
+        res.append(path[:])  
+        
+        # 从start开始，避免重复选择  
+        for i in range(start, len(nums)):  
+            path.append(nums[i])  
+            self.dfs(nums, path, i + 1, res)  # 注意是i+1  
+            path.pop()
+```
+### 17. 电话号码的组合
+
+这道题的核心思路是：对于输入的每个数字（例如"23"），我们需要依次选择每个数字对应的字母表中的一个字母（2对应'abc'中选一个，3对应'def'中选一个），通过回溯的方式尝试所有可能的组合。具体来说，就是先固定第一个数字的一个字母，然后递归处理后面的数字，当选择的字母个数等于输入数字的长度时，就找到了一个有效组合。
+```python
+class Solution:  
+    def letterCombinations(self, digits: str) -> List[str]:  
+        # 处理空字符串情况  
+        if not digits:  
+            return []  
+            
+        hash_map = {  
+            '2': ['a','b','c'],  
+            '3': ['d','e','f'],  
+            '4': ['g','h','i'],  
+            '5': ['j','k','l'],  
+            '6': ['m','n','o'],  
+            '7': ['p','q','r','s'],  
+            '8': ['t','u','v'],  
+            '9': ['w','x','y','z']  
+        }  
+        
+        res = []  
+        self.dfs(digits, [], 0, res, hash_map)  
+        return res  
+    
+    def dfs(self, digits, path, index, res, hash_map):  
+        # 找到一个组合  
+        if len(path) == len(digits):  
+            res.append(''.join(path))  
+            return  
+            
+        # 获取当前数字对应的字母列表  
+        curr_digit = digits[index]  
+        letters = hash_map[curr_digit]  
+        
+        # 遍历当前数字对应的所有字母  
+        for letter in letters:  
+            path.append(letter)  # 选择一个字母  
+            self.dfs(digits, path, index + 1, res, hash_map)  
+            path.pop()  # 回溯
+```
+
+### 39. 组合总和
+
+![image](https://github.com/user-attachments/assets/effdcc9d-eeb5-4ba3-adcd-865696443741)
+![image](https://github.com/user-attachments/assets/9026580d-2f07-45c6-a1fa-46d93463bb0b)
+
+
 ### 51 N皇后
 采用DFS回溯策略，通过逐行放置皇后的方式（保证行不冲突），使用set集合维护可用列（保证列不冲突），并利用坐标关系(行+列相等表示在同一主对角线，行-列相等表示在同一副对角线)来判断对角线冲突，当成功放置N个皇后时，将当前解加入结果集，最终返回所有可能的解
 
