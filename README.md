@@ -1774,6 +1774,13 @@ class Solution:
 ![image](https://github.com/user-attachments/assets/7f546cd3-602b-4891-8940-3f4a4f96f138)
 
 
+### 22.括号生成
+
+![image](https://github.com/user-attachments/assets/23edb140-adf4-42a3-b63b-d515972ca5c4)
+![Uploading image.png…]()
+
+
+
 
 ### 51 N皇后
 采用DFS回溯策略，通过逐行放置皇后的方式（保证行不冲突），使用set集合维护可用列（保证列不冲突），并利用坐标关系(行+列相等表示在同一主对角线，行-列相等表示在同一副对角线)来判断对角线冲突，当成功放置N个皇后时，将当前解加入结果集，最终返回所有可能的解
