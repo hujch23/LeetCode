@@ -1777,7 +1777,8 @@ class Solution:
 ### 22.括号生成
 
 ![image](https://github.com/user-attachments/assets/23edb140-adf4-42a3-b63b-d515972ca5c4)
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/4ecd1660-cd65-46de-a0e6-b3ad7841a240)
+
 
 
 
