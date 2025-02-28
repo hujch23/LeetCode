@@ -1801,7 +1801,7 @@ class Solution:
         right = len(nums) - 1
 
         while left <= right:
-            middle = left + (right - left) // 2
+            middle = (left + right) //2
             if nums[middle] == target:
                 return middle
             elif nums[middle] > target:
@@ -1809,13 +1809,211 @@ class Solution:
             else:
                 left = middle + 1  
                 
-        return right + 1     
+        return right + 1   
 ```
 ### 74. 搜索二维矩阵
+直接将二维矩阵视为一维数组进行二分查找，时间复杂度为 O(log(m*n))，是最优的
+```python
+class Solution:  
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:  
+        if not matrix or not matrix[0]:  
+            return False  
+        
+        rows, cols = len(matrix), len(matrix[0])  
+        left, right = 0, rows * cols - 1  
+        
+        while left <= right:  
+            mid = (left + right) // 2  
+            # 将一维索引转换为二维坐标  
+            row, col = mid // cols, mid % cols  
+            
+            if matrix[row][col] == target:  
+                return True  
+            elif matrix[row][col] < target:  
+                left = mid + 1  
+            else:  
+                right = mid - 1  
+                
+        return False
+```
 
+### 34. 查找元素的第一个和最后一个
 
+最优解应该是使用两次二分查找：第一次二分查找找左边界，第二次二分查找找右边界，这样可以将时间复杂度优化到 O(log n)
 
+```python
+class Solution:  
+    def searchRange(self, nums: List[int], target: int) -> List[int]:  
+        def findBound(nums, target, isFirst):  
+            left, right = 0, len(nums) - 1  
+            
+            while left <= right:  
+                mid = (left + right) // 2  
+                if nums[mid] == target:  
+                    if isFirst:  
+                        # 如果是查找左边界，即使找到了目标值也要继续向左找  
+                        if mid == 0 or nums[mid-1] != target:  
+                            return mid  
+                        right = mid - 1  
+                    else:  
+                        # 如果是查找右边界，即使找到了目标值也要继续向右找  
+                        if mid == len(nums)-1 or nums[mid+1] != target:  
+                            return mid  
+                        left = mid + 1  
+                elif nums[mid] < target:  
+                    left = mid + 1  
+                else:  
+                    right = mid - 1  
+            return -1  
+        
+        if not nums:  
+            return [-1, -1]  
+            
+        left = findBound(nums, target, True)  
+        if left == -1:  
+            return [-1, -1]  
+        right = findBound(nums, target, False)  
+        
+        return [left, right]
+```
 
+### 搜索旋转排序数组
+
+每次二分后，一定有一半是有序的，判断哪一半有序：通过比较 nums[left] 和 nums[mid]，判断目标值在哪一半：，如果在有序的那一半，用普通二分查找，如果不在有序的那一半，去另一半找
+```python
+class Solution:  
+    def search(self, nums: List[int], target: int) -> int:  
+        if not nums:  
+            return -1  
+            
+        left, right = 0, len(nums) - 1  
+        
+        # 找到旋转点  
+        while left <= right:  # 使用 <=   
+            mid = (left + right) // 2  
+            if nums[mid] == target:  
+                return mid  
+                
+            # 判断哪一部分是有序的  
+            if nums[left] <= nums[mid]:  # 左半部分有序  
+                if nums[left] <= target < nums[mid]:  
+                    right = mid - 1  
+                else:  
+                    left = mid + 1  
+            else:  # 右半部分有序  
+                if nums[mid] < target <= nums[right]:  
+                    left = mid + 1  
+                else:  
+                    right = mid - 1  
+                    
+        return -1
+```
+
+### 153. 寻找旋转排序数组中的最小值
+```python
+class Solution:  
+    def findMin(self, nums: List[int]) -> int:  
+        left = 0  
+        right = len(nums) - 1  
+        
+        while left < right:  
+            mid = (left + right) // 2  
+            
+            if nums[mid] > nums[right]:  
+                # 最小值在右半部分  
+                left = mid + 1  
+            else:  
+                # 最小值在左半部分（包括mid）  
+                right = mid  
+                
+        return nums[left]
+```
+### 4.寻找两个正序数组的中位数 
+碰到这个题直接摆烂
+```python
+class Solution:  
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:  
+        # 确保 nums1 的长度更短，这样二分查找的范围更小，更有效率  
+        if len(nums1) > len(nums2):  
+            nums1, nums2 = nums2, nums1  
+        
+        m, n = len(nums1), len(nums2)  
+        
+        # 计算合并后数组的左半部分应有的元素个数  
+        # 对于总长度为奇数的情况：左半部分多一个元素  
+        # 对于总长度为偶数的情况：左右部分元素个数相等  
+        total_left = (m + n + 1) // 2  
+        
+        # 在 nums1 中二分查找分割点  
+        # left和right表示nums1可能的分割位置范围  
+        left, right = 0, m  
+        
+        while left <= right:  
+            # i 是 nums1 的分割点：nums1[0..i-1] | nums1[i..m-1]  
+            i = (left + right) // 2  
+            # j 是 nums2 的分割点：nums2[0..j-1] | nums2[j..n-1]  
+            # i + j = total_left，保证左半部分总数符合要求  
+            j = total_left - i  
+            
+            # 获取分割点周围的四个数  
+            # nums1_left：nums1分割点左边的数  
+            # nums1_right：nums1分割点右边的数  
+            # nums2_left：nums2分割点左边的数  
+            # nums2_right：nums2分割点右边的数  
+            
+            # 处理边界情况：如果分割点在数组边缘  
+            nums1_left = float('-inf') if i == 0 else nums1[i-1]  
+            nums1_right = float('inf') if i == m else nums1[i]  
+            nums2_left = float('-inf') if j == 0 else nums2[j-1]  
+            nums2_right = float('inf') if j == n else nums2[j]  
+            
+            # 判断分割是否合适  
+            # 合适的分割需要满足：左半部分的最大值 <= 右半部分的最小值  
+            if nums1_left <= nums2_right and nums2_left <= nums1_right:  
+                # 找到合适的分割点  
+                if (m + n) % 2 == 0:  
+                    # 如果总长度为偶数  
+                    # 中位数 = (左半部分最大值 + 右半部分最小值) / 2  
+                    return (max(nums1_left, nums2_left) +   
+                           min(nums1_right, nums2_right)) / 2  
+                else:  
+                    # 如果总长度为奇数  
+                    # 中位数就是左半部分的最大值  
+                    return max(nums1_left, nums2_left)  
+                    
+            elif nums1_left > nums2_right:  
+                # 如果nums1左边的值大于nums2右边的值  
+                # 说明nums1的分割点太靠右了，需要向左移动  
+                right = i - 1  
+            else:  
+                # 如果nums2左边的值大于nums1右边的值  
+                # 说明nums1的分割点太靠左了，需要向右移动  
+                left = i + 1  
+
+# 举例说明：  
+# nums1 = [1, 3, 5]  
+# nums2 = [2, 4, 6]  
+# 总长度 = 6（偶数）  
+# total_left = (6 + 1) // 2 = 3  
+
+# 假设 i = 1：  
+# nums1: [1 | 3, 5]       i = 1  
+# nums2: [2, 4 | 6]       j = 2  
+# nums1_left = 1  
+# nums1_right = 3  
+# nums2_left = 4  
+# nums2_right = 6  
+
+# 检查是否满足条件：  
+# nums1_left(1) <= nums2_right(6) √  
+# nums2_left(4) <= nums1_right(3) ×  
+# 不满足条件，需要增大i  
+
+# 最终找到正确的分割：  
+# nums1: [1, 3 | 5]  
+# nums2: [2 | 4, 6]  
+# 中位数 = (max(3,2) + min(5,4)) / 2 = (3 + 4) / 2 = 3.5
+```
 
 ## 堆
 ### 295 数据流中的中位数
