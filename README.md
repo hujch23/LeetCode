@@ -1636,11 +1636,185 @@ class Solution:
  ```       
 
 ## 图论
+### 200. 岛屿数量
+DFS：从1开始搜索，需要注意的是搜索完的地方可以进行标记，递归的终止条件就是出边界了或者四个方向都是0
+```python
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+
+        # 用DFS搜，找有多少个连接在一块的1
+        counter = 0
+        m, n = len(grid), len(grid[0])
+        def dfs(i, j):
+            if i < 0 or i >=m or j < 0 or j >=n:
+                return
+            if grid[i][j] != "1":
+                return 
+            grid[i][j] = "0"
+
+            dfs(i + 1, j) 
+            dfs(i - 1, j) 
+            dfs(i, j + 1) 
+            dfs(i, j - 1)
+       
+        
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == "1":
+                    counter += 1
+                    dfs(i, j)
+
+        return counter
+```
+
+### 994. 腐烂的橘子
+
+```python
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+
+        # BFS首先找到所有腐烂橘子的位置
+        queue = deque()  # 记录腐橘子的位置以及时间
+        fresh_count = 0
+        min_time = 0
+        m, n = len(grid), len(grid[0])
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 2:
+                    queue.append((i, j, 0))
+                elif grid[i][j] == 1:
+                    fresh_count += 1
+
+        if fresh_count == 0:
+            return 0
+
+        while queue:
+            curr_i, curr_j, time = queue.popleft()
+            directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
+            for di, dj in directions:
+                next_di = curr_i + di
+                next_dj = curr_j + dj
+                min_time = max(min_time, time)
+                if 0<=next_di<m and 0<=next_dj<n and grid[next_di][next_dj] == 1:
+                    grid[next_di][next_dj] = 2
+                    queue.append((next_di, next_dj, time + 1))
+                    fresh_count -= 1
+        return min_time if fresh_count == 0 else -1
+```
+
 ### 207 课程表
 用DFS检测有向图中是否存在环。首先把课程依赖关系转换成图（用邻接表表示），然后用一个visited数组记录节点的访问状态（0未访问，1正在访问，2已完成访问）。在DFS遍历过程中，如果遇到状态为1的节点（正在访问），就说明存在环，返回False；如果遍历完所有节点都没有发现环，就返回True表示可以完成所有课程
+![image](https://github.com/user-attachments/assets/b2573e09-119e-4c98-8af1-aec1e216f791)
+
+```python
+class Solution:  
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:  
+        # 构建图  
+        graph = [[] for _ in range(numCourses)]  
+        for cur, pre in prerequisites:  
+            graph[pre].append(cur)  
+        
+        # 访问状态数组：0 = 未访问，1 = 正在访问，2 = 已完成访问  
+        visited = [0] * numCourses  
+
+        # 深度优先搜索函数  
+        def dfs(course):  
+            if visited[course] == 1:  # 如果当前节点正在访问，说明存在环  
+                return False  
+            if visited[course] == 2:  # 如果当前节点已经访问完成，直接返回 True  
+                return True  
+            
+            # 标记当前节点为正在访问  
+            visited[course] = 1  
+
+            # 递归访问所有邻居节点  
+            for neighbor in graph[course]:  
+                if not dfs(neighbor):  # 如果邻居节点检测到环，返回 False  
+                    return False  
+            
+            # 标记当前节点为访问完成  
+            visited[course] = 2  
+            return True  
+
+        # 遍历所有课程，检查是否存在环  
+        for course in range(numCourses):  
+            if not dfs(course):  # 如果某个课程检测到环，返回 False  
+                return False  
+        
+        return True
+```
+
+
+
+
 
 ### 208 实现Trie（前缀树）
 用一个树形结构，其中每个节点存储一个字符和一个字典（children），字典用来指向子节点。从根节点开始，沿着路径走就能形成字符串。每个节点还有一个标记(is_end)表示是否是完整单词的结尾。插入时逐字符建立路径，查找时逐字符检查路径是否存在，区别在于查找完整单词时需要检查is_end标记，而查找前缀则不需要
+```python
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+
+    def search(self, word: str) -> bool:
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        if node.is_end:
+            return True
+        else:
+            return False
+            
+    def startsWith(self, prefix: str) -> bool:
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True
+```
+
+
+## 二分查找
+
+### 35. 搜索插入位置
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+
+        left = 0
+        right = len(nums) - 1
+
+        while left <= right:
+            middle = left + (right - left) // 2
+            if nums[middle] == target:
+                return middle
+            elif nums[middle] > target:
+                right = middle - 1
+            else:
+                left = middle + 1  
+                
+        return right + 1     
+```
+### 74. 搜索二维矩阵
+
+
+
 
 
 ## 堆
