@@ -2312,6 +2312,103 @@ class Solution:
         return max_area
 ```
 
+## 贪心算法
+
+### 121. 买股票的最佳时机
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+
+        min_price = prices[0]
+        max_price = 0
+        for i in range(1, len(prices)):
+            min_price = min(min_price, prices[i])
+            max_price = max(max_price, prices[i] - min_price)
+            
+
+        return max_price
+```
+
+### 55. 跳跃游戏
+每走一步后都想着能够走最远
+```python
+class Solution:  
+    def canJump(self, nums: List[int]) -> bool:  
+        n = len(nums)  
+        
+        # 处理特殊情况  
+        if n == 1:  
+            return True  
+            
+        # 初始化最远可以跳到的位置  
+        max_steps = nums[0]  
+        
+        # 遍历数组（除了最后一个元素）  
+        for i in range(n-1):  
+            # 更新最远距离  
+            # max_steps-1 表示之前的最远距离减去走到当前位置消耗的一步  
+            # nums[i] 表示从当前位置可以跳的步数  
+            max_steps = max(max_steps - 1, nums[i])  
+            
+            # 如果在某个位置无法继续前进  
+            if max_steps == 0:  
+                return False  
+        
+        # 判断最终是否能到达终点  
+        return max_steps > 0
+```
+
+### 45. 跳跃游戏II
+每次在上次能跳到的范围（end）内选择一个能跳的最远的位置（也就是能跳到max_far位置的点）作为下次的起跳点 ！
+```python
+class Solution:  
+    def jump(self, nums: List[int]) -> int:  
+        n = len(nums)  
+        max_far = 0    # 目前能跳到的最远位置  
+        end = 0        # 上次跳跃可达范围的右边界  
+        steps = 0      # 跳跃次数  
+        
+        # 遍历数组，但不访问最后一个元素  
+        for i in range(n - 1):  
+            # 更新目前能跳到的最远位置  
+            max_far = max(max_far, i + nums[i])  
+            
+            # 到达上次跳跃能到达的右边界  
+            if i == end:  
+                # 更新边界  
+                end = max_far  
+                steps += 1  
+                
+        return steps
+```
+
+### 763. 划分字母区间
+你提到的思路很好：找到每个字母最后出现的位置，然后当遍历到某个位置时，如果这个位置是当前区间内所有字母的最后出现位置，就可以划分
+```python
+class Solution:  
+    def partitionLabels(self, s: str) -> List[int]:  
+        # 记录每个字母最后出现的位置  
+        last = {}  
+        for i, c in enumerate(s):  
+            last[c] = i  
+            
+        result = []  
+        start = 0   # 当前区间的起始位置  
+        end = 0     # 当前区间的结束位置  
+        
+        # 遍历字符串  
+        for i, c in enumerate(s):  
+            # 更新当前区间的结束位置  
+            end = max(end, last[c])  
+            
+            # 如果当前位置到达区间结束位置，说明可以划分  
+            if i == end:  
+                result.append(end - start + 1)  
+                start = i + 1  
+                
+        return result
+```
+
 ## 回溯
 
 ### 46. 全排列
