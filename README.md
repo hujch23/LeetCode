@@ -2020,8 +2020,133 @@ class Solution:
 用两个堆把数据分成两半：大顶堆存较小的一半，小顶堆存较大的一半；保持大顶堆的大小等于或比小顶堆多一个；添加数字时，通过在两个堆之间倒腾，保证大顶堆的最大值小于小顶堆的最小值；中位数就是：当总数为偶数时：两个堆顶的平均值；当总数为奇数时：大顶堆的堆顶（注意python默认是小顶堆）
 
 ## 栈
+### 20. 有效的括号
+这个题思路是很简单的，利用栈的特性即可，但是我在写代码中遇到了两个问题。一是没有定义对应关系直接判断，习惯默认左右括号是对应的了；二是忽略了有可能一开始就是右括号所以栈为空的情况
+```python
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack = []
+         # 定义括号对应关系  
+        pairs = {')': '(', ']': '[', '}': '{'}  
+        for char in s:
+            if char == '(' or  char == '[' or  char == '{':
+                stack.append(char)
+            else:
+                if not stack or pairs[char] != stack.pop():
+                    return False
+
+        return True if len(stack) == 0 else False
+```
+### 155. 最小栈
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈，这个题目的核心是如何在常数操作实现获取栈中最小值，思路就是利用一个辅助栈，说白了就是放进去时每次记录最小值，这样栈顶就是最小值了
+```python
+class MinStack:
+
+    def __init__(self):
+        self.stack = []
+
+    def push(self, val: int) -> None:
+        if not self.stack:
+            self.stack.append((val, val))
+        else:
+            self.stack.append((val, min(val, self.stack[-1][-1])))
+
+    def pop(self) -> None:
+        self.stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1][0]
+
+    
+    def getMin(self) -> int:
+        return self.stack[-1][-1]
+```
+
+### 394. 字符串解码
+这道题我的思路是正确的，但是在处理的时候没法正确的提取连续的字符串和数字，特别是数字陷入了误区，直接也按照字符的方式从栈中取出来就好，再用int转换即可
+```python
+class Solution:  
+    def decodeString(self, s: str) -> str:  
+        stack = []  
+        
+        for char in s:  
+            if char != ']':  
+                stack.append(char)  
+            else:  
+                # 提取字符串  
+                cur_string = ""  
+                while stack and stack[-1] != '[':  
+                    cur_string = stack.pop() + cur_string  
+                
+                # 弹出 '['  
+                stack.pop()  
+                
+                # 提取数字  
+                num = ""  
+                while stack and stack[-1].isdigit():  
+                    num = stack.pop() + num  
+                
+                # 将重复后的字符串压回栈中  
+                stack.append(int(num) * cur_string)  
+        
+        return "".join(stack)
+```
+### 739. 每日温度
+啊啊啊啊啊啊啊啊，啊啊啊啊啊啊啊，栈放数组索引而不是值，对于这种需要计算范围的，用索引！！！！！！！！！！！！！！！！！！！！！！！
+```python
+class Solution:  
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:  
+        n = len(temperatures)  
+        result = [0] * n  # 初始化结果数组  
+        stack = []        # 用于存储下标的栈  
+        
+        for i in range(n):  
+            # 当栈不为空，且当前温度大于栈顶温度时  
+            while stack and temperatures[i] > temperatures[stack[-1]]:  
+                prev_idx = stack.pop()  # 获取栈顶温度的下标  
+                result[prev_idx] = i - prev_idx  # 计算等待天数  
+            stack.append(i)  # 将当前下标入栈  
+        
+        return result
+```
+
+
+
 ### 84 柱状图中的最大矩形
 单调栈：当遇到一个小于栈顶的元素时，说明找到了栈顶元素的右边界，栈保持递增，所以栈顶下面的元素就是左边第一个小于当前高度的位置，这样就能确定一个矩形的左右边界，从而计算面积
+```python
+class Solution:  
+    def largestRectangleArea(self, heights: List[int]) -> int:  
+        # 在数组两端添加0，简化边界情况处理  
+        # 左边的0确保第一个元素也能正确计算宽度  
+        # 右边的0确保最后能弹出所有栈中元素  
+        heights = [0] + heights + [0]  
+        
+        # 单调递增栈，存储下标  
+        stack = []  
+        # 记录最大矩形面积  
+        max_area = 0  
+        
+        # 遍历每个位置  
+        for i in range(len(heights)):  
+            # 当前高度小于栈顶高度时，说明找到了右边界  
+            # 需要计算栈顶元素为高度的矩形面积  
+            while stack and heights[i] < heights[stack[-1]]:  
+                # 获取当前高度  
+                height = heights[stack.pop()]  
+                
+                # 计算宽度：右边界(i) - 左边界(新栈顶的下标) - 1  
+                # 由于添加了哨兵0，不用担心栈为空的情况  
+                width = i - stack[-1] - 1  
+                
+                # 更新最大面积  
+                max_area = max(max_area, width * height)  
+            
+            # 将当前下标入栈  
+            stack.append(i)  
+            
+        return max_area
+```
 
 ## 回溯
 
