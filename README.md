@@ -2016,8 +2016,146 @@ class Solution:
 ```
 
 ## 堆
+需要学习：如何构造堆、快排、桶排
+### 215. 数组中的第K个最大元素
+无脑背堆的相关函数就行，思路是很简单的
+```python
+class Solution:  
+    def findKthLargest(self, nums: List[int], k: int) -> int:  
+        # 创建一个最小堆  
+        # 我们维护一个大小为k的最小堆，这样堆顶就是第k大的元素  
+        heap = []  
+
+        # 遍历数组中的每个元素  
+        for i in range(len(nums)):  
+            # 情况1：堆的大小小于k，直接将元素加入堆中  
+            if len(heap) < k:  
+                heapq.heappush(heap, nums[i])  
+            # 情况2：堆的大小等于k  
+            else:  
+                # 如果当前元素大于堆顶元素  
+                # 说明找到了一个更大的元素，应该替换掉堆顶  
+                if nums[i] > heap[0]:  
+                    # heapreplace 等价于先 heappop 再 heappush  
+                    # 但是效率更高，因为只需要一次向下调整  
+                    heapq.heapreplace(heap, nums[i])  
+        
+        # 返回堆顶元素，即第k大的数  
+        return heap[0]
+```
+如果面试让手写堆，那咱就手搓呗：
+```python
+class Solution:  
+    def findKthLargest(self, nums: List[int], k: int) -> int:  
+        # 初始化一个大小为k的最小堆  
+        heap = []  
+        
+        # 向下调整堆，维护最小堆性质  
+        def sift_down(arr, start, end):  
+            root = start  
+            while True:  
+                # 找到左子节点  
+                child = 2 * root + 1  
+                # 如果左子节点超出范围，说明已经是叶子节点，结束调整  
+                if child > end:  
+                    break  
+                # 如果右子节点存在且小于左子节点，选择右子节点  
+                if child + 1 <= end and arr[child + 1] < arr[child]:  
+                    child += 1  
+                # 如果子节点小于根节点，交换位置  
+                if arr[child] < arr[root]:  
+                    arr[root], arr[child] = arr[child], arr[root]  
+                    root = child  
+                else:  
+                    break  
+        
+        # 向上调整堆，维护最小堆性质  
+        def sift_up(arr, child):  
+            while child > 0:  
+                parent = (child - 1) // 2  
+                if arr[parent] > arr[child]:  
+                    arr[parent], arr[child] = arr[child], arr[parent]  
+                    child = parent  
+                else:  
+                    break  
+        
+        # 遍历数组  
+        for num in nums:  
+            if len(heap) < k:  
+                # 堆未满，将元素加入堆底，然后向上调整  
+                heap.append(num)  
+                sift_up(heap, len(heap) - 1)  
+            elif num > heap[0]:  
+                # 堆已满，且当前元素大于堆顶  
+                # 替换堆顶元素，然后向下调整  
+                heap[0] = num  
+                sift_down(heap, 0, len(heap) - 1)  
+        
+        return heap[0]
+```
+### 347. 前K个高频元素
+还是调包吧，用哈希表统计元素频率，然后对频率进行堆排序就行，相比上边的题就多个哈希表
+```python
+class Solution:  
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:  
+        # 统计每个数字出现的频率  
+        hash_map = {}  
+        for num in nums:  
+            hash_map[num] = hash_map.get(num, 0) + 1  
+        
+        # 创建最小堆，存储(频率,数字)元组  
+        heap = []  
+        
+        # 遍历哈希表的所有键值对  
+        for num, freq in hash_map.items():  
+            if len(heap) < k:  
+                # 堆未满，直接加入(频率,数字)  
+                heapq.heappush(heap, (freq, num))  
+            else:  
+                # 堆已满，且当前频率大于堆顶频率  
+                if freq > heap[0][0]:  
+                    # 替换堆顶元素  
+                    heapq.heapreplace(heap, (freq, num))  
+        
+        # 提取堆中的数字（第二个元素）  
+        return [item[1] for item in heap]
+```
+
 ### 295 数据流中的中位数
 用两个堆把数据分成两半：大顶堆存较小的一半，小顶堆存较大的一半；保持大顶堆的大小等于或比小顶堆多一个；添加数字时，通过在两个堆之间倒腾，保证大顶堆的最大值小于小顶堆的最小值；中位数就是：当总数为偶数时：两个堆顶的平均值；当总数为奇数时：大顶堆的堆顶（注意python默认是小顶堆）
+```python
+class MedianFinder:
+
+    def __init__(self):
+        self.min_head = []
+        self.max_head = []
+        
+
+    def addNum(self, num: int) -> None:
+
+        if len(self.min_head) == len(self.max_head):
+            # 先放进小顶堆，然后把最小的放大顶堆，保持大顶堆数量多一个
+            heapq.heappush(self.min_head, num)
+            small = heapq.heappop(self.min_head)
+            heapq.heappush(self.max_head, -small)
+
+
+        else:
+            # 先放大顶堆，然后把最大的放小顶堆
+            heapq.heappush(self.max_head, -num)
+            large = - heapq.heappop(self.max_head)
+            heapq.heappush(self.min_head, large)
+
+        
+
+    def findMedian(self) -> float:
+        # 大堆等于小堆，相加取平均
+        if len(self.min_head) == len(self.max_head):
+            return (self.min_head[0] - self.max_head[0]) /2
+        
+        else:
+            return -self.max_head[0]
+```
 
 ## 栈
 ### 20. 有效的括号
