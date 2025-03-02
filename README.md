@@ -2796,6 +2796,74 @@ class Solution:
 
         return res
 ```
-
 ### 198. 打家劫舍
+```python
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if len(nums) == 1:
+            return nums[0]
 
+        dp = [0] * len(nums)
+        dp[0] = nums[0]
+        dp[1] = max(nums[0], nums[1])
+        for i in range(2, len(nums)):
+            dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+
+        return max(dp)
+```
+### 279. 完全平方数
+![image](https://github.com/user-attachments/assets/00e8cda0-8eba-4217-b176-ea44c263d5b4)
+```python
+class Solution:  
+    def numSquares(self, n: int) -> int:  
+        # 初始化 dp 数组  
+        dp = [float('inf')] * (n + 1)  
+        dp[0] = 0  # 数字 0 不需要任何完全平方数  
+        
+        # 遍历每个数字 i  
+        for i in range(1, n + 1):  
+            # 遍历所有可能的完全平方数 j^2  
+            j = 1  
+            while j * j <= i:  
+                dp[i] = min(dp[i], dp[i - j * j] + 1)  
+                j += 1  
+        
+        return dp[n]
+```
+### 322. 零钱兑换
+和上边的题目一样，属于同一种动态规划问题
+```python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        
+        dp = [float('inf')] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount + 1):
+            for coin in coins:
+                if i - coin >=0:
+                    dp[i] = min(dp[i], dp[i - coin] + 1)
+        return dp[amount] if dp[amount] != float('inf') else -1
+   ```
+
+### 139. 单词拆分
+![image](https://github.com/user-attachments/assets/2c30bc9b-361a-4638-9144-a5be52fee86d)
+
+```python
+class Solution:  
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:  
+        # 将 wordDict 转换为集合，方便快速查找  
+        wordSet = set(wordDict)  
+        # 初始化 dp 数组，dp[i] 表示 s[:i] 是否可以被拼接  
+        dp = [False] * (len(s) + 1)  
+        dp[0] = True  # 空字符串可以被拼接  
+        
+        # 遍历字符串 s  
+        for i in range(1, len(s) + 1):  
+            # 遍历 wordDict 中的每个单词  
+            for word in wordSet:  
+                # 如果当前单词可以匹配 s[i-len(word):i]  
+                if i >= len(word) and s[i-len(word):i] == word:  
+                    dp[i] = dp[i] or dp[i-len(word)]  
+        
+        return dp[len(s)]
+```
