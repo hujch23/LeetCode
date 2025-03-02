@@ -2756,3 +2756,46 @@ class Solution:
 
 ```
 
+## 动态规划
+### 70. 爬楼梯
+```python
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n == 1:
+            return 1
+        dp = [1] * n 
+        dp[1] = 2
+
+        for i in range(2, n):
+            dp[i] = dp[i- 1] + dp[i-2]
+
+        return dp[n-1]
+```
+
+### 118. 杨辉三角
+```python
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+
+        if numRows == 1:
+            return [[1]]
+        
+        res = [[1], [1,1]]
+        pre_level = [1, 1]
+        
+        for i in range(2, numRows):
+            # 每一行都是从1开始，每一行数量等于行数，每一行最后一个都是1
+            cur_level = []
+            cur_level.append(1)
+            for j in range(1, i):
+                cur_level.append(pre_level[j-1] + pre_level[j])
+
+            cur_level.append(1)
+            pre_level = cur_level
+            res.append(cur_level)
+
+        return res
+```
+
+### 198. 打家劫舍
+
