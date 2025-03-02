@@ -2944,4 +2944,9 @@ def canPartition(self, nums: List[int]) -> bool:
     return dp[target]  # 返回是否能凑出目标和
   ```
 ### 最长有效括号
-      
+![image](https://github.com/user-attachments/assets/ed9d4e26-189e-4201-a409-2b706fb87da5)
+
+
+
+![image](https://github.com/user-attachments/assets/e6b184ea-83ef-4d13-b0be-53391b7f9ded)
+
