@@ -2867,3 +2867,61 @@ class Solution:
         
         return dp[len(s)]
 ```
+### 300. 最长递增子序列
+```python
+class Solution:  
+    def lengthOfLIS(self, nums: List[int]) -> int:  
+        dp = [1] * len(nums)  # dp[i] 表示以 nums[i] 结尾的最长递增子序列长度  
+        for i in range(1, len(nums)):  
+            for j in range(i):  
+                if nums[j] < nums[i]:  
+                    dp[i] = max(dp[i], dp[j] + 1)  
+        return max(dp)  # 返回全局最长递增子序列的长度
+```
+![image](https://github.com/user-attachments/assets/37a83107-2274-4db5-a4a5-d358873a310d)
+
+```python
+class Solution:  
+    def lengthOfLIS(self, nums: List[int]) -> int:  
+        def binarySearch(sub, x):  
+            # 手动实现二分查找，找到第一个大于等于 x 的位置  
+            left, right = 0, len(sub) - 1  
+            while left < right:  
+                mid = (left + right) // 2  
+                if sub[mid] >= x:  
+                    right = mid  
+                else:  
+                    left = mid + 1  
+            return left  
+
+        sub = []  # 用于存储当前的递增子序列  
+        for x in nums:  
+            if not sub or x > sub[-1]:  
+                sub.append(x)  # 如果 x 大于 sub 的最后一个元素，直接添加  
+            else:  
+                # 使用二分查找找到第一个大于等于 x 的位置  
+                pos = binarySearch(sub, x)  
+                sub[pos] = x  # 替换该位置的值为 x  
+        return len(sub)
+```
+
+### 152. 乘积最大子数组
+由于存在负数，那么会导致最大的变最小的，最小的变最大的。因此还需要维护当前最小值imin
+```python
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+
+        max_prod = nums[0]
+        min_prod = nums[0]
+        result_max = nums[0]
+
+        for i in range(1, len(nums)):
+            if nums[i] < 0:
+                max_prod, min_prod = min_prod, max_prod
+            max_prod = max(nums[i],max_prod*nums[i])
+            min_prod = min(nums[i],min_prod*nums[i])
+            result_max = max(result_max,max_prod)
+        return result_max
+```
+
+        
