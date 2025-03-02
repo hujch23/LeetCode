@@ -212,16 +212,20 @@ class Solution:
   遍历的时候寻找窗口左边界，即重复出现的索引位置，时间复杂度：O(N)，其中N是字符串的长度。左指针和右指针分别会遍历整个字符串一次。空间复杂度：O(∣Σ∣)，其中Σ表示字符集（即字符串中可以出现的字符），∣Σ∣表示字符集的大小。在本题中没有明确说明字符集，因此可以默认为所有 ASCII 码在[0,128)内的字符，即∣Σ∣=128。我们需要用到哈希集合来存储出现过的字符，而字符最多有∣Σ∣个，因此空间复杂度为O(∣Σ∣)。
 
 ```python
-class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
-        hash = {}
-        max_len = 0
-        start = 0
-        for i, char in enumerate(s):
-            start = max(start, hash.get(char, -1) + 1)
-            max_len = max(max_len, i - start + 1)
-            hash[char] = i
-        return max_len
+def lengthOfLongestSubstring(self, s: str) -> int:  
+    hash = {}          # 存储字符最后出现的位置  
+    max_len = 0        # 最长无重复子串的长度  
+    start = 0          # 当前无重复子串的起始位置  
+    
+    for i, char in enumerate(s):  
+        # 如果字符重复，更新起始位置  
+        start = max(start, hash.get(char, -1) + 1)  
+        # 更新最大长度  
+        max_len = max(max_len, i - start + 1)  
+        # 记录字符位置  
+        hash[char] = i  
+        
+    return max_len
   ```
 
 
@@ -2945,8 +2949,165 @@ def canPartition(self, nums: List[int]) -> bool:
   ```
 ### 最长有效括号
 ![image](https://github.com/user-attachments/assets/ed9d4e26-189e-4201-a409-2b706fb87da5)
+```python
+def longestValidParentheses(self, s: str) -> int:  
+    if not s:  
+        return 0  
+        
+    dp = [0] * len(s)  
 
-
+    for i in range(1, len(s)):  # 从索引1开始  
+        if s[i] == ')':  
+            # 情况1：()型  
+            if s[i-1] == '(':  
+                dp[i] = (dp[i-2] if i >= 2 else 0) + 2  
+            # 情况2：))型  
+            elif i - dp[i-1] > 0 and s[i-dp[i-1]-1] == '(':  
+                dp[i] = dp[i-1] + 2  
+                # 加上之前的有效括号长度  
+                if i - dp[i-1] >= 2:  
+                    dp[i] += dp[i-dp[i-1]-2]  
+                    
+    return max(dp) if dp else 0
+```
 
 ![image](https://github.com/user-attachments/assets/e6b184ea-83ef-4d13-b0be-53391b7f9ded)
 
+```python
+class Solution:  
+    def longestValidParentheses(self, s: str) -> int:  
+        # 处理边界情况  
+        if not s or len(s) == 1:  
+            return 0  
+        
+        # 栈初始化，放入-1作为哨兵  
+        stack = [-1]  
+        max_length = 0  
+        
+        # 遍历字符串  
+        for i in range(len(s)):  
+            if s[i] == '(':  # 遇到左括号  
+                stack.append(i)  # 索引入栈  
+            else:  # 遇到右括号  
+                stack.pop()  # 弹出栈顶  
+                if not stack:  # 栈空，说明没有匹配的左括号  
+                    stack.append(i)  # 当前右括号索引入栈作为新的参考点  
+                else:  # 栈不空，说明找到了匹配  
+                    # 计算当前有效括号长度  
+                    curr_length = i - stack[-1]  
+                    max_length = max(curr_length, max_length)  
+        
+        return max_length
+```
+
+### 62. 不同路径
+```python
+class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        dp = [[0]*n for _ in range(m)]
+        for i in range(m):
+            for j in range(n):
+                dp[0][j] = dp[i][0] = 1
+        for i in range(1, m):
+            for j in range(1, n):
+                dp[i][j] = dp[i-1][j] + dp[i][j-1]
+
+        return dp[m-1][n-1]
+```
+
+### 64. 最小路径和
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:  
+        m, n = len(grid), len(grid[0])  
+        dp = [[0]* n for _ in range(m)]  
+        
+        # 初始化第一列  
+        dp[0][0] = grid[0][0]  # 起点  
+        for i in range(1, m):  
+            dp[i][0] = dp[i-1][0] + grid[i][0]  
+        
+        # 初始化第一行  
+        for j in range(1, n):  
+            dp[0][j] = dp[0][j-1] + grid[0][j]  
+
+        # 正确的状态转移  
+        for i in range(1, m):  
+            for j in range(1, n):  
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]  
+
+        return dp[m-1][n-1]
+```
+### 5. 最长回文子串
+```python
+def longestPalindrome(self, s: str) -> str:  
+    # 中心扩展函数  
+    def extend_center(left, right):  
+        # 向两边扩展，直到不满足回文条件  
+        while left >= 0 and right < len(s) and s[left] == s[right]:  
+            left -= 1  
+            right += 1  
+        # 返回有效的回文子串  
+        return s[left + 1:right]  
+
+    result = ""  # 存储最长回文子串  
+
+    # 遍历每个可能的中心点  
+    for i in range(len(s)):  
+        odd = extend_center(i, i)      # 奇数长度回文  
+        even = extend_center(i, i+1)   # 偶数长度回文  
+
+        # 取最长的子串  
+        result = max(result, odd, even, key=len)  
+    return result
+```
+
+### 1143. 最长公共子序列
+![image](https://github.com/user-attachments/assets/785113ff-4125-48cf-b71f-24da2d280878)
+```python
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        m = len(text1)+1
+        n = len(text2)+1
+
+        dp = [[0] * n for _ in range(m)]
+
+
+        for i in range(1, m):
+            for j in range(1, n):
+                if text1[i-1] == text2[j-1]:
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+
+        return dp[m-1][n-1]
+```
+### 72. 编辑距离
+```python
+def minDistance(self, word1: str, word2: str) -> int:  
+    m = len(word1) + 1  # 包含空字符串情况  
+    n = len(word2) + 1  
+    
+    # dp[i][j] 表示 word1前i个字符 转换到 word2前j个字符 需要的最少操作数  
+    dp = [[0] * n for _ in range(m)]  
+    
+    # 初始化：空字符串转换到另一个字符串需要的操作数  
+    for i in range(m):  
+        dp[i][0] = i    # 删除操作  
+    for j in range(n):  
+        dp[0][j] = j    # 插入操作  
+    
+    # 状态转移  
+    for i in range(1, m):  
+        for j in range(1, n):  
+            if word1[i-1] == word2[j-1]:  
+                dp[i][j] = dp[i-1][j-1]  # 字符相同，不需要操作  
+            else:  
+                dp[i][j] = min(  
+                    dp[i-1][j-1],  # 替换操作  
+                    dp[i-1][j],    # 删除操作  
+                    dp[i][j-1]     # 插入操作  
+                ) + 1  
+                
+    return dp[m-1][n-1]
+```
