@@ -2923,5 +2923,25 @@ class Solution:
             result_max = max(result_max,max_prod)
         return result_max
 ```
+### 416. 分割等和子集
+```python
+def canPartition(self, nums: List[int]) -> bool:  
+    # 1. 判断是否可能存在解  
+    total = sum(nums)  
+    if total % 2 != 0:  # 总和为奇数，必不可能平分  
+        return False  
+    target = total // 2  # 目标和（每个子集的和）  
 
-        
+    # 2. 初始化dp数组  
+    dp = [False] * (target + 1)  # dp[i]表示是否可以凑出和为i  
+    dp[0] = True  # 空集的和为0，总是可以达到  
+
+    # 3. 动态规划过程  
+    for num in nums:  # 遍历每个数字  
+        for j in range(target, num-1, -1):  # 从后往前遍历  
+            dp[j] = dp[j] or dp[j-num]  # 状态转移  
+
+    return dp[target]  # 返回是否能凑出目标和
+  ```
+### 最长有效括号
+      
