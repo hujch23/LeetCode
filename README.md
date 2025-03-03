@@ -3111,3 +3111,21 @@ def minDistance(self, word1: str, word2: str) -> int:
                 
     return dp[m-1][n-1]
 ```
+
+
+## ACM模式
+```python
+# 不同的split()用法  
+line = "A,B,C"  
+print(line.split(','))  # ['A', 'B', 'C']  
+
+line = "A B C"  
+print(line.split())     # ['A', 'B', 'C']  默认按空格分割  
+print(line.split(' '))  # ['A', 'B', 'C']  显式按空格分割  
+
+# 处理多个空格  
+line = "A  B   C"  
+print(line.split())     # ['A', 'B', 'C']  处理多个空格  
+print(line.split(' '))  # ['A', '', 'B', '', '', 'C']  保留空字符串
+```
+![image](https://github.com/user-attachments/assets/8c163a79-b080-4067-9906-48499d60c752)
