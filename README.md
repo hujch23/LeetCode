@@ -3208,4 +3208,46 @@ print(merge_sort(nums))
 
 
 ## 堆排序
+```python
+def heap_sort(nums):
+    n = len(nums)
 
+    # 构建最大堆
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(nums, n, i)
+
+    # 逐步将堆顶元素（最大值）移到数组末尾，并调整堆
+    for i in range(n - 1, 0, -1):
+        nums[0], nums[i] = nums[i], nums[0]  # 将堆顶元素与末尾元素交换
+        heapify(nums, i, 0)  # 调整剩余的堆
+
+    return nums
+
+def heapify(nums, n, i):
+    """
+    调整以索引 i 为根的子树，使其满足最大堆的性质。
+    nums: 数组
+    n: 堆的大小
+    i: 当前需要调整的节点索引
+    """
+    largest = i  # 假设当前节点是最大值
+    left = 2 * i + 1  # 左子节点索引
+    right = 2 * i + 2  # 右子节点索引
+
+    # 如果左子节点存在且大于当前最大值  
+    if left < n and nums[left] > nums[largest]:
+        largest = left
+
+    # 如果右子节点存在且大于当前最大值
+    if right < n and nums[right] > nums[largest]:
+        largest = right
+
+    # 如果最大值不是当前节点，则交换，并递归调整
+    if largest != i:
+        nums[i], nums[largest] = nums[largest], nums[i]
+        heapify(nums, n, largest)
+
+nums = [3, 4, 2, 1, 5, 6, 7]
+sorted_nums = heap_sort(nums)
+print("排序结果:", sorted_nums)
+```
