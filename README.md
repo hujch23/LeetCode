@@ -3129,3 +3129,57 @@ print(line.split())     # ['A', 'B', 'C']  处理多个空格
 print(line.split(' '))  # ['A', '', 'B', '', '', 'C']  保留空字符串
 ```
 ![image](https://github.com/user-attachments/assets/8c163a79-b080-4067-9906-48499d60c752)
+
+
+## 递归实现快排
+```python
+def quick_sort(nums):
+    if len(nums) <= 1:
+        return nums
+    pivot = nums[0]
+
+    num_left = [x for x in nums[1:] if x < pivot]
+    nums_right = [x for x in nums[1:] if x > pivot]
+
+
+    return quick_sort(num_left) + [pivot] + quick_sort(nums_right)
+
+nums = [3, 4, 2, 1, 5, 6, 7]
+print(quick_sort(nums))
+```
+
+## 迭代实现快排
+
+```python
+def quick_sort(nums):
+    if len(nums) <= 1:
+        return nums
+    stack = [(0, len(nums)-1)]
+
+    while stack:
+        left, right = stack.pop()
+        if left >= right:
+            continue
+        pivot = nums[left]
+        low, high = left, right
+        while low < high:
+            while low < high and nums[high] >= pivot:
+                high -= 1
+            while low < high and nums[low] <= pivot:
+                low += 1
+            nums[low], nums[high] = nums[high], nums[low]
+        nums[low], nums[left] = nums[left], nums[low]
+        stack.append((left, low - 1))
+        stack.append((low + 1, right))
+    return nums
+
+
+nums = [1, 5, 7, 4, 3, 1, 8, 2]
+print(quick_sort(nums))
+```
+
+
+
+
+
+
