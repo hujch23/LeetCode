@@ -2208,6 +2208,95 @@ class Solution:
 
         return True if len(stack) == 0 else False
 ```
+
+### 71. 简化路径
+首先跳过连续的路径分隔符，读取每个有效的路径部分，根据路径部分的不同类型进行不同的处理，使用栈来维护最终的简化路径，实现返回上一级目录和忽略无效路径的逻辑，最后将栈中的路径部分重新组装成标准路径格式
+```python
+class Solution:
+    def simplifyPath(self, path: str) -> str:
+        stack = []
+        n = len(path)
+        i = 0
+        while i < n:
+            cur_path = ""
+            while i < n and path[i] == '/':  
+                i += 1
+            while i < n and path[i] != '/':
+                cur_path += path[i]
+                i += 1
+            if cur_path == '..':
+                if stack:
+                    stack.pop()
+            elif cur_path == '.' or cur_path == '':
+                continue
+            else:
+                stack.append(cur_path)
+            
+            i += 1
+        
+        res = "/" + "/".join(stack)
+```
+### 224. 基本计算器
+
+
+```python
+class Solution:  
+    def calculate(self, s: str) -> int:  
+        # 符号栈，初始为正号  
+        # 栈顶元素表示当前的符号状态  
+        stack = [1]  
+        
+        # 最终结果  
+        ans = 0  
+        
+        # 当前正在解析的数字  
+        num = 0  
+        
+        # 当前操作的符号（1表示正号，-1表示负号）  
+        op = 1  
+
+        for c in s:  
+            # 跳过空格  
+            if c == ' ':  
+                continue  
+            
+            # 如果是数字，构建完整的数字  
+            # 例如：对于 "123"，会依次变成 1 -> 12 -> 123  
+            elif c.isdigit():  
+                num = num * 10 + int(c)  
+            
+            # 遇到非数字字符（运算符或括号）  
+            else:  
+                # 将之前解析的数字加入结果  
+                # 使用当前操作符（op）计算  
+                ans += op * num  
+                
+                # 重置数字  
+                num = 0  
+
+                # 处理不同的字符  
+                if c == '+':  
+                    # 使用栈顶的符号  
+                    op = stack[-1]  
+                
+                elif c == '-':  
+                    # 取栈顶符号的相反数  
+                    op = -stack[-1]  
+                
+                elif c == '(':  
+                    # 将当前符号压入栈  
+                    # 为括号内的表达式准备新的符号状态  
+                    stack.append(op)  
+                
+                elif c == ')':  
+                    # 括号结束，弹出最近的符号状态  
+                    stack.pop()  
+
+        # 处理最后一个数字  
+        # 如果表达式以数字结尾，需要加上最后的数字  
+        return ans + op * num  
+```
+
 ### 155. 最小栈
 设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈，这个题目的核心是如何在常数操作实现获取栈中最小值，思路就是利用一个辅助栈，说白了就是放进去时每次记录最小值，这样栈顶就是最小值了
 ```python
