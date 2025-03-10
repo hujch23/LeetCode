@@ -668,7 +668,7 @@ class Solution:
 ```
 
 
-### 206. 反装链表
+### 206. 反转链表
 使用迭代法
 ```python
 class Solution:
@@ -699,8 +699,38 @@ class Solution:
         return newHead
 ```
 
+### 92. 反转链表II
+![image](https://github.com/user-attachments/assets/018d5864-c3f9-494c-81db-fec24e7c96ce)
 
-
+```python
+class Solution:  
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:  
+        # 如果链表为空或不需要反转  
+        if not head or left == right:  
+            return head  
+        
+        # 创建虚拟头节点，简化边界处理  
+        dummy = ListNode(0)  
+        dummy.next = head  
+        prev = dummy  
+        
+        # 找到反转起始位置的前一个节点  
+        for _ in range(left - 1):  
+            prev = prev.next  
+        
+        # 开始反转  
+        start = prev.next  
+        then = start.next  
+        
+        # 反转 left 到 right 之间的节点  
+        for _ in range(right - left):  
+            start.next = then.next  
+            then.next = prev.next  
+            prev.next = then  
+            then = start.next  
+        
+        return dummy.next  
+```
 
 
 ### 141. 环形链表
@@ -2238,63 +2268,34 @@ class Solution:
 ```
 ### 224. 基本计算器
 
-
+关键在于将符号状态压入栈中，并在遇到括号时动态调整当前的操作符，从而能够处理任意深度的括号嵌套和正负号变化
 ```python
 class Solution:  
     def calculate(self, s: str) -> int:  
-        # 符号栈，初始为正号  
-        # 栈顶元素表示当前的符号状态  
-        stack = [1]  
-        
-        # 最终结果  
-        ans = 0  
-        
-        # 当前正在解析的数字  
-        num = 0  
-        
-        # 当前操作的符号（1表示正号，-1表示负号）  
-        op = 1  
+        stack = [1]  # 符号栈，初始为正号  
+        ans = 0      # 最终结果  
+        num = 0      # 当前数字  
+        op = 1       # 当前操作符（1表示正号，-1表示负号）  
 
         for c in s:  
-            # 跳过空格  
             if c == ' ':  
-                continue  
-            
-            # 如果是数字，构建完整的数字  
-            # 例如：对于 "123"，会依次变成 1 -> 12 -> 123  
+                continue  # 跳过空格  
             elif c.isdigit():  
-                num = num * 10 + int(c)  
-            
-            # 遇到非数字字符（运算符或括号）  
+                num = num * 10 + int(c)  # 构建数字  
             else:  
-                # 将之前解析的数字加入结果  
-                # 使用当前操作符（op）计算  
-                ans += op * num  
-                
-                # 重置数字  
-                num = 0  
+                ans += op * num  # 将当前数字加入结果  
+                num = 0  # 重置数字  
 
-                # 处理不同的字符  
                 if c == '+':  
-                    # 使用栈顶的符号  
-                    op = stack[-1]  
-                
+                    op = stack[-1]  # 使用栈顶的符号  
                 elif c == '-':  
-                    # 取栈顶符号的相反数  
-                    op = -stack[-1]  
-                
+                    op = -stack[-1]  # 取栈顶符号的相反数  
                 elif c == '(':  
-                    # 将当前符号压入栈  
-                    # 为括号内的表达式准备新的符号状态  
-                    stack.append(op)  
-                
+                    stack.append(op)  # 将当前符号压入栈  
                 elif c == ')':  
-                    # 括号结束，弹出最近的符号状态  
-                    stack.pop()  
+                    stack.pop()  # 括号结束，弹出最近的符号状态  
 
-        # 处理最后一个数字  
-        # 如果表达式以数字结尾，需要加上最后的数字  
-        return ans + op * num  
+        return ans + op * num  # 处理最后一个数字 
 ```
 
 ### 155. 最小栈
