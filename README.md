@@ -1553,7 +1553,7 @@ class Solution:
 
 ### 105. 从前序遍历与中序遍历构造二叉树
 
-大概记得点点思路，在下标画横线就想起来了，但是不会用递归，尴尬死了，递归简洁版使用index，此方法空间复杂度提高
+大概记得点点思路，在下标画横线就想起来了，但是不会用递归，尴尬死了，递归简洁版使用index，此方法时间复杂度提高
 ```python
 class Solution:
     def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
@@ -1569,7 +1569,7 @@ class Solution:
        
 ```
 
-通过传递 preorder 和 inorder 的索引范围，而不是直接切片，避免创建新的列表。这样可以将切片操作的空间复杂度从 O(n^2)降低到O(mn)
+时间复杂度从 O(n^2)降低到O(n)
 
 ```python
 class Solution:  
