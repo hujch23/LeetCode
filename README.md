@@ -734,6 +734,37 @@ class Solution:
         return dummy.next  
 ```
 
+### 234. ⚠️回文链表
+
+```python
+class Solution:
+    def isPalindrome(self, head: Optional[ListNode]) -> bool:
+        def reverse(head):
+            pre = None
+            cur = head
+            while cur:
+                temp = cur.next
+                cur.next = pre
+                pre = cur
+                cur = temp
+            return pre
+
+        slow = fast = head
+        while fast.next and fast.next.next:
+            fast = fast.next.next
+            slow = slow.next
+        
+        right = reverse(slow.next)
+        slow.next = None
+        left = head
+
+        while left and right:
+            if left.val != right.val:
+                return False
+            left = left.next
+            right = right.next
+        return True  
+```
 
 ### 141. 环形链表
 快慢指针找环
