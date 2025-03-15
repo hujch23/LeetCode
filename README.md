@@ -1191,7 +1191,7 @@ class Solution:
 ```
 
 
-### 146. LRU缓存
+### 146. ⚠️ LRU缓存
 真要命的题，添加到头部：add_to_head()，哈希表存储key到节点的映射，删除节点：remove_node()，移动到头部：move_to_head()，删除尾部：remove_tail()
  ```python 
 class ListNode:
