@@ -2488,7 +2488,7 @@ class Solution:
         return max_steps > 0
 ```
 
-### 45. 跳跃游戏II
+### 45. ⚠️ 跳跃游戏II
 每次在上次能跳到的范围（end）内选择一个能跳的最远的位置（也就是能跳到max_far位置的点）作为下次的起跳点 ！
 ```python
 class Solution:  
