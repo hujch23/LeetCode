@@ -2902,7 +2902,7 @@ class Solution:
         return dp[n-1]
 ```
 
-### 118. 杨辉三角
+### ⚠️ 118. 杨辉三角
 ```python
 class Solution:
     def generate(self, numRows: int) -> List[List[int]]:
@@ -2941,7 +2941,7 @@ class Solution:
 
         return max(dp)
 ```
-### 279. 完全平方数
+### ⚠️ 279. 完全平方数
 ![image](https://github.com/user-attachments/assets/00e8cda0-8eba-4217-b176-ea44c263d5b4)
 ```python
 class Solution:  
@@ -2975,7 +2975,7 @@ class Solution:
         return dp[amount] if dp[amount] != float('inf') else -1
    ```
 
-### 139. 单词拆分
+### ⚠️ 139. 单词拆分
 ![image](https://github.com/user-attachments/assets/2c30bc9b-361a-4638-9144-a5be52fee86d)
 
 ```python
@@ -3035,7 +3035,7 @@ class Solution:
         return len(sub)
 ```
 
-### 152. 乘积最大子数组
+### ⚠️152. 乘积最大子数组
 由于存在负数，那么会导致最大的变最小的，最小的变最大的。因此还需要维护当前最小值imin
 ```python
 class Solution:
@@ -3053,7 +3053,7 @@ class Solution:
             result_max = max(result_max,max_prod)
         return result_max
 ```
-### 416. 分割等和子集
+### ⚠️ 416. 分割等和子集
 ```python
 def canPartition(self, nums: List[int]) -> bool:  
     # 1. 判断是否可能存在解  
@@ -3073,7 +3073,7 @@ def canPartition(self, nums: List[int]) -> bool:
 
     return dp[target]  # 返回是否能凑出目标和
   ```
-### 最长有效括号
+### ⚠️ 最长有效括号
 ![image](https://github.com/user-attachments/assets/ed9d4e26-189e-4201-a409-2b706fb87da5)
 ```python
 def longestValidParentheses(self, s: str) -> int:  
