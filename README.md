@@ -3164,7 +3164,7 @@ class Solution:
 
         return dp[m-1][n-1]
 ```
-### 5. 最长回文子串
+### ⚠️ 5. 最长回文子串
 ```python
 def longestPalindrome(self, s: str) -> str:  
     # 中心扩展函数  
@@ -3188,7 +3188,7 @@ def longestPalindrome(self, s: str) -> str:
     return result
 ```
 
-### 1143. 最长公共子序列
+### ⚠️ 1143. 最长公共子序列
 ![image](https://github.com/user-attachments/assets/785113ff-4125-48cf-b71f-24da2d280878)
 ```python
 class Solution:
@@ -3207,8 +3207,24 @@ class Solution:
                     dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 
         return dp[m-1][n-1]
+
+         # 回溯找子序列  
+        result = []  
+        i, j = m, n  
+        while i > 0 and j > 0:  
+            if text1[i-1] == text2[j-1]:  
+                result.append(text1[i-1])  
+                i -= 1  
+                j -= 1  
+            elif dp[i-1][j] > dp[i][j-1]:  
+                i -= 1  
+            else:  
+                j -= 1  
+        
+        # 返回反转后的子序列  
+        return ''.join(result[::-1])
 ```
-### 72. 编辑距离
+### ⚠️  72. 编辑距离
 ```python
 def minDistance(self, word1: str, word2: str) -> int:  
     m = len(word1) + 1  # 包含空字符串情况  
